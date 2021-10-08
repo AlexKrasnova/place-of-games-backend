@@ -17,7 +17,7 @@ public class EventService {
     private final EventRepository eventRepository;
 
     public List<Event> findAll() {
-        return eventRepository.findAll();
+        return eventRepository.findAllWithPlaces();
     }
 
     public Event findById(Long id) {

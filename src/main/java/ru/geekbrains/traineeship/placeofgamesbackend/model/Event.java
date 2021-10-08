@@ -41,6 +41,4 @@ public class Event {
     @Column(name = "number_of_participants")
     private Integer numberOfParticipants;
 
-    @Version
-    private Integer version;
 }

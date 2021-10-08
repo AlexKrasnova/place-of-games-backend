@@ -25,9 +25,6 @@ public class Place {
     @Column(name = "address")
     private String address;
 
-    @Version
-    private Integer version;
-
-    @OneToMany(mappedBy = "place", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
     private List<Event> events;
 }

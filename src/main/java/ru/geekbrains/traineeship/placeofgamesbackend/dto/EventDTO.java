@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class EventWithPlaceDetailsDTO {
+public class EventDTO {
 
     private Long id;
     private String name;

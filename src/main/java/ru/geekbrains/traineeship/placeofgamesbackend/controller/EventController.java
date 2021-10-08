@@ -2,7 +2,7 @@ package ru.geekbrains.traineeship.placeofgamesbackend.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventWithPlaceDetailsDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.mapper.EventMapper;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.service.EventService;
@@ -19,17 +19,17 @@ public class EventController {
     private final EventMapper eventMapper;
 
     @GetMapping
-    public List<EventWithPlaceDetailsDTO> findAll() {
+    public List<EventDTO> findAll() {
         List<Event> events = eventService.findAll();
         return events.stream()
-                .map(eventMapper::convertEventToEventWithPlaceDetailsDTO)
+                .map(eventMapper::mapToEventDTO)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public EventWithPlaceDetailsDTO findById(@PathVariable Long id) {
+    public EventDTO findById(@PathVariable Long id) {
         Event event = eventService.findById(id);
-        return eventMapper.convertEventToEventWithPlaceDetailsDTO(event);
+        return eventMapper.mapToEventDTO(event);
     }
 
     @PostMapping("/{id}/participants")

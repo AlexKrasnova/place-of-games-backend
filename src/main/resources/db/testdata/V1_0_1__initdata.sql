@@ -1,22 +1,3 @@
-create table place
-(
-    id      bigserial primary key not null,
-    name    text,
-    address text                  not null
-);
-
-create table event
-(
-    id                         bigserial primary key not null,
-    name                       text                  not null,
-    time                       timestamp             not null,
-    duration                   integer,
-    place_id                   bigserial             not null,
-    max_number_of_participants integer,
-    number_of_participants     integer               not null,
-    foreign key (place_id) references place
-);
-
 insert into place (name, address)
 values ('Стадион Металлист', 'г. Харьков, ул. Плехановская, д. 65'),
        ('Котокафе', 'г. Харьков, ул. Полтавский шлях, д. 66'),

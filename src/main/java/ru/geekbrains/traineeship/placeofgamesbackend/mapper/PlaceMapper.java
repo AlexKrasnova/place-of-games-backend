@@ -7,7 +7,7 @@ import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 @Component
 public class PlaceMapper {
 
-    public PlaceDTO convertPlaceToPlaceDTO(Place place) {
+    public PlaceDTO mapToPlaceDTO(Place place) {
         return PlaceDTO.builder()
                 .id(place.getId())
                 .name(place.getName())
