@@ -1,8 +1,8 @@
 server:
   port: 8089
 spring:
-#  profiles:
-#    active: dev
+  profiles:
+    active: dev
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5433/place_of_games
