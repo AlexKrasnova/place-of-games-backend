@@ -19,5 +19,6 @@ public class EventDTO {
     private Integer maxNumberOfParticipants;
     private Integer numberOfParticipants;
     private String description;
+    private String category;
 
 }
