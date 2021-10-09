@@ -12,6 +12,7 @@ public class PlaceMapper {
                 .id(place.getId())
                 .name(place.getName())
                 .address(place.getAddress())
+                .description(place.getDescription())
                 .build();
     }
 }

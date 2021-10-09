@@ -25,6 +25,9 @@ public class Place {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "description")
+    private String description;
+
     @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
     private List<Event> events;
 }

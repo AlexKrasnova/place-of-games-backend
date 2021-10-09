@@ -5,9 +5,8 @@ spring:
     active: dev
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5433/place_of_games
-    username: postgres
-    password: admin
+  flyway:
+    locations: "classpath:/db/migration"
   jpa:
     show-sql: true
     properties:

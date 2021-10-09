@@ -41,4 +41,7 @@ public class Event {
     @Column(name = "number_of_participants")
     private Integer numberOfParticipants;
 
+    @Column(name = "description")
+    private String description;
+
 }

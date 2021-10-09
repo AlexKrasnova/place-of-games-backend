@@ -20,6 +20,7 @@ public class EventMapper {
                 .place(placeMapper.mapToPlaceDTO(event.getPlace()))
                 .maxNumberOfParticipants(event.getMaxNumberOfParticipants())
                 .numberOfParticipants(event.getNumberOfParticipants())
+                .description(event.getDescription())
                 .build();
     }
 
