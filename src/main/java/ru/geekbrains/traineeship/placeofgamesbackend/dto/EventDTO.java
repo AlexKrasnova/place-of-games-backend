@@ -2,6 +2,7 @@ package ru.geekbrains.traineeship.placeofgamesbackend.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.geekbrains.traineeship.placeofgamesbackend.model.Category;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 
 import javax.persistence.*;
@@ -19,5 +20,6 @@ public class EventDTO {
     private Integer maxNumberOfParticipants;
     private Integer numberOfParticipants;
     private String description;
+    private Category category;
 
 }
