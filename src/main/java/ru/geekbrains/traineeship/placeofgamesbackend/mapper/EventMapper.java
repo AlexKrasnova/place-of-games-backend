@@ -21,7 +21,7 @@ public class EventMapper {
                 .maxNumberOfParticipants(event.getMaxNumberOfParticipants())
                 .numberOfParticipants(event.getNumberOfParticipants())
                 .description(event.getDescription())
-                .category(event.getCategory().toString())
+                .category(event.getCategory())
                 .build();
     }
 
