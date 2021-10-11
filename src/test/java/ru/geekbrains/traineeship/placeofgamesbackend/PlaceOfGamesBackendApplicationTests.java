@@ -8,8 +8,9 @@ class PlaceOfGamesBackendApplicationTests {
 
 	@Test
 	void contextLoads() {
-		int i = 1;
+		int i = 21;
 		assert(false);
+
 	}
 
 }
