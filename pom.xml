@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ru.geekbrains.traineeship</groupId>
 	<artifactId>place-of-games-backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<name>place-of-games-backend</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
@@ -60,6 +60,15 @@
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
 		</dependency>
 	</dependencies>
 
