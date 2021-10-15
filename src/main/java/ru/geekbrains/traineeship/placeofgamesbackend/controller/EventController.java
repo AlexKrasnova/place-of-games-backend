@@ -1,6 +1,7 @@
 package ru.geekbrains.traineeship.placeofgamesbackend.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.mapper.EventMapper;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/events")
+@Secured("ROLE_USER")
 @RequiredArgsConstructor
 public class EventController {
 
