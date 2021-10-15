@@ -29,5 +29,9 @@ public class Place {
     private String description;
 
     @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
+    private List<WorkingHours> workingHoursList;
+
+    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
     private List<Event> events;
+    
 }
