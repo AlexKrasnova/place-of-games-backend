@@ -10,7 +10,8 @@ import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    @Query("select e from Event e join fetch e.place ")
+    @Query("select e from Event e join fetch e.place")
+        // todo: Разобраться, почему не работает такой запрос @Query("select e from Event e join fetch e.place join fetch e.place.workingHoursList")
     List<Event> findAllWithPlaces();
 
     @Modifying
