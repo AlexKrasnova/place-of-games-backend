@@ -8,8 +8,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorType;
-import ru.geekbrains.traineeship.placeofgamesbackend.exception.EventIsFullException;
-import ru.geekbrains.traineeship.placeofgamesbackend.exception.EventNotFoundException;
+import ru.geekbrains.traineeship.placeofgamesbackend.exception.*;
 
 @ControllerAdvice
 public class CommonExceptionsHandler {
@@ -23,6 +22,18 @@ public class CommonExceptionsHandler {
 
         if (exception instanceof EventIsFullException)
             return process(exception, ErrorType.EVENT_IS_FULL);
+
+        if (exception instanceof InvalidPasswordException)
+            return process(exception, ErrorType.INVALID_PASSWORD);
+
+        if (exception instanceof PlaceNotFoundException)
+            return process(exception, ErrorType.PLACE_NOT_FOUND);
+
+        if (exception instanceof UserAlreadyExistsException)
+            return process(exception, ErrorType.USER_EXISTS_ERROR);
+
+        if (exception instanceof UserNotFoundException)
+            return process(exception, ErrorType.USER_NOT_FOUND);
 
         if (exception instanceof HttpMessageNotReadableException)
             return process(exception, ErrorType.INVALID_REQUEST_PARAMS);
