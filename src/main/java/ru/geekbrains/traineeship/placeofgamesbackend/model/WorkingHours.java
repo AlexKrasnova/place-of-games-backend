@@ -27,8 +27,9 @@ public class WorkingHours {
     @JoinColumn(name = "place_id", insertable = false, updatable = false)
     private Place place;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "day_of_week")
-    private String dayOfWeek;
+    private DayOfWeek dayOfWeek;
 
     @Column(name = "date")
     private LocalDate date;

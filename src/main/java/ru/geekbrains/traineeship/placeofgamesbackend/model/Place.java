@@ -28,10 +28,10 @@ public class Place {
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<WorkingHours> workingHoursList;
 
     @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
     private List<Event> events;
-    
+
 }

@@ -15,7 +15,7 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
 
     public List<Place> findAll() {
-        return placeRepository.findAll();
+        return placeRepository.findAllWithWorkingHours();
     }
 
     public Place findById(Long id) {
