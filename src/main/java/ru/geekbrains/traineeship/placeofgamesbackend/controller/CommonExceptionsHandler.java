@@ -11,8 +11,6 @@ import ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorType;
 import ru.geekbrains.traineeship.placeofgamesbackend.exception.EventIsFullException;
 import ru.geekbrains.traineeship.placeofgamesbackend.exception.EventNotFoundException;
 
-
-
 @ControllerAdvice
 public class CommonExceptionsHandler {
 
@@ -27,12 +25,12 @@ public class CommonExceptionsHandler {
             return process(exception, ErrorType.EVENT_IS_FULL);
 
         if (exception instanceof HttpMessageNotReadableException)
-            return process(exception,ErrorType.INVALID_REQUEST_PARAMS);
+            return process(exception, ErrorType.INVALID_REQUEST_PARAMS);
 
         if (exception instanceof MethodArgumentTypeMismatchException)
-            return process(exception,ErrorType.INVALID_REQUEST_PARAMS);
+            return process(exception, ErrorType.INVALID_REQUEST_PARAMS);
 
-        return process (exception, ErrorType.UNEXPECTED_ERROR);
+        return process(exception, ErrorType.UNEXPECTED_ERROR);
     }
 
     private ResponseEntity<ErrorDTO> process(Exception exception, ErrorType errorType) {
