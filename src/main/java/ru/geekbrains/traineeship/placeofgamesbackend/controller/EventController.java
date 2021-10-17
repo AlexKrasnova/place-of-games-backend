@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.mapper.EventMapper;
-import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
-import ru.geekbrains.traineeship.placeofgamesbackend.service.EventService;
+import ru.geekbrains.traineeship.placeofgamesbackend.processor.EventProcessor;
 
+import java.security.Principal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/events")
@@ -17,26 +15,26 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EventController {
 
-    private final EventService eventService;
-    private final EventMapper eventMapper;
+    private final EventProcessor eventProcessor;
 
     @GetMapping
-    public List<EventDTO> findAll() {
-        List<Event> events = eventService.findAll();
-        return events.stream()
-                .map(eventMapper::mapToEventDTO)
-                .collect(Collectors.toList());
+    public List<EventDTO> findAll(Principal principal) {
+        return eventProcessor.findAll(principal.getName());
     }
 
     @GetMapping("/{id}")
-    public EventDTO findById(@PathVariable Long id) {
-        Event event = eventService.findById(id);
-        return eventMapper.mapToEventDTO(event);
+    public EventDTO findById(@PathVariable Long id, Principal principal) {
+        return eventProcessor.findById(id, principal.getName());
     }
 
     @PostMapping("/{id}/participants")
-    public void addParticipant (@PathVariable Long id) {
-        eventService.addParticipant(id);
+    public void addParticipant (@PathVariable Long id, Principal principal) {
+        eventProcessor.addParticipant(id, principal.getName());
+    }
+
+    @DeleteMapping("/{id}/participants")
+    public void deleteParticipant (@PathVariable Long id, Principal principal) {
+        eventProcessor.deleteParticipant(id, principal.getName());
     }
 
 }

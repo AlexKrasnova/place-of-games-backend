@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -38,9 +39,6 @@ public class Event {
     @Column(name = "max_number_of_participants")
     private Integer maxNumberOfParticipants;
 
-    @Column(name = "number_of_participants")
-    private Integer numberOfParticipants;
-
     @Column(name = "description")
     private String description;
 
@@ -48,4 +46,12 @@ public class Event {
     @Column(name = "category")
     private Category category;
 
+    @ManyToMany
+    @JoinTable(name = "event_participant",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_login"))
+    private Set<User> participants;
+
+    @Version
+    private Long version;
 }
