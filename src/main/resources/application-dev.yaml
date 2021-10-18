@@ -8,6 +8,15 @@ spring:
     console:
       enabled: true
       settings:
-        web-allow-others: false
+        web-allow-others: true
   flyway:
     locations: "classpath:/db/migration,classpath:/db/testdata"
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+        SQL: DEBUG
