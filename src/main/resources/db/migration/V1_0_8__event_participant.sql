@@ -8,7 +8,9 @@ create table event_participant
 );
 
 alter table event
-drop column number_of_participants,
+drop column number_of_participants;
+
+alter table event
 add column version bigserial;
 
 update event set version = 0;
