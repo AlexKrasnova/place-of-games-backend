@@ -30,7 +30,7 @@ public class CommonExceptionsHandler {
             return process(exception, ErrorType.PLACE_NOT_FOUND);
 
         if (exception instanceof UserAlreadyExistsException)
-            return process(exception, ErrorType.USER_EXISTS_ERROR);
+            return process(exception, ErrorType.USER_ALREADY_EXISTS);
 
         if (exception instanceof UserNotFoundException)
             return process(exception, ErrorType.USER_NOT_FOUND);
