@@ -11,7 +11,7 @@ public class EventMapper {
 
     private final PlaceMapper placeMapper;
 
-    public EventDTO mapToEventDTO(Event event) {
+    public EventDTO mapToEventDTO(Event event, String currentUser) {
         return EventDTO.builder()
                 .id(event.getId())
                 .name(event.getName())
@@ -19,9 +19,14 @@ public class EventMapper {
                 .duration(event.getDuration())
                 .place(placeMapper.mapToPlaceDTO(event.getPlace()))
                 .maxNumberOfParticipants(event.getMaxNumberOfParticipants())
-                .numberOfParticipants(event.getNumberOfParticipants())
+                .numberOfParticipants(event.getParticipants().size())
                 .description(event.getDescription())
                 .category(event.getCategory())
+                .isCurrentUserEnrolled(event
+                        .getParticipants()
+                        .stream()
+                        .anyMatch(user -> user.getLogin().equals(currentUser))
+                )
                 .build();
     }
 

@@ -13,7 +13,9 @@ public enum ErrorType {
     USER_NOT_FOUND("Пользователь не найден", HttpStatus.NOT_FOUND),
     PLACE_NOT_FOUND("Площадка не найдена", HttpStatus.NOT_FOUND),
     UNEXPECTED_ERROR("Неизвестная ошибка", HttpStatus.INTERNAL_SERVER_ERROR),
-    INVALID_REQUEST_PARAMS("Неверные параметры запроса", HttpStatus.BAD_REQUEST);
+    INVALID_REQUEST_PARAMS("Неверные параметры запроса", HttpStatus.BAD_REQUEST),
+    CURRENT_USER_NOT_ENROLLED("Текущий пользователь не зарегистрирован на мероприятии", HttpStatus.BAD_REQUEST),
+    USER_ALREADY_ENROLLED("Текущий пользоавтель уже зарегистрирован на мероприятии", HttpStatus.BAD_REQUEST);
 
     private String description;
     private HttpStatus httpStatus;

@@ -27,6 +27,10 @@ public class UserService {
         return userRepository.findByLoginWithRoles(login);
     }
 
+    public User findByLogin(String login) {
+        return userRepository.findById(login).orElseThrow(UserNotFoundException::new);
+    }
+
     public void createUser(String login, String password, String name) {
         userRepository.findById(login).ifPresent(user -> {
             throw new UserAlreadyExistsException();
