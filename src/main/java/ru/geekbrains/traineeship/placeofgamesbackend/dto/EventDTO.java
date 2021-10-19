@@ -20,7 +20,6 @@ public class EventDTO {
 
     private PlaceDTO place;
 
-
     private Integer maxNumberOfParticipants;
 
     private Integer numberOfParticipants;

@@ -1,5 +1,8 @@
 package ru.geekbrains.traineeship.placeofgamesbackend.controller;
 
+import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -10,12 +13,15 @@ import ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorType;
 import ru.geekbrains.traineeship.placeofgamesbackend.exception.*;
 
+@Slf4j
 @ControllerAdvice
 public class CommonExceptionsHandler {
 
     @ExceptionHandler(Throwable.class)
 
     public ResponseEntity<ErrorDTO> handleException(Exception exception, WebRequest request) {
+
+        log.error("Error has occurred", exception);
 
         if (exception instanceof EventNotFoundException)
             return process(exception, ErrorType.EVENT_NOT_FOUND);
