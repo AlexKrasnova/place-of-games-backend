@@ -41,6 +41,12 @@ public class CommonExceptionsHandler {
         if (exception instanceof MethodArgumentTypeMismatchException)
             return process(exception, ErrorType.INVALID_REQUEST_PARAMS);
 
+        if (exception instanceof CurrentUserNotEnrolledException)
+            return process(exception, ErrorType.CURRENT_USER_NOT_ENROLLED);
+
+        if (exception instanceof UserAlreadyEnrolledException)
+            return process(exception, ErrorType.USER_ALREADY_ENROLLED);
+
         return process(exception, ErrorType.UNEXPECTED_ERROR);
     }
 
