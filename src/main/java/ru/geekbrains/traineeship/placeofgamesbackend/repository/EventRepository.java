@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    @Query("select distinct e from Event e join fetch e.place left join e.participants")
+    @Query("select distinct e from Event e left join e.place left join e.participants")
         // todo: Разобраться, почему не работает такой запрос @Query("select e from Event e join fetch e.place join fetch e.place.workingHoursList")
     List<Event> findAllWithPlacesAndUsers();
 }

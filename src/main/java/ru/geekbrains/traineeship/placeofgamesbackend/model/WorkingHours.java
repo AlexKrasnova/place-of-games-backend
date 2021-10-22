@@ -20,11 +20,11 @@ public class WorkingHours {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "place_id")
+    @Column(name = "place_id", insertable = false, updatable = false)
     private Long placeId;
 
     @ManyToOne
-    @JoinColumn(name = "place_id", insertable = false, updatable = false)
+    @JoinColumn(name = "place_id")
     private Place place;
 
     @Enumerated(EnumType.STRING)
