@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -15,7 +14,6 @@ import ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.PlaceDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.WorkingHoursDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.mapper.EventMapper;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.User;
@@ -24,12 +22,9 @@ import ru.geekbrains.traineeship.placeofgamesbackend.repository.EventRepository;
 import ru.geekbrains.traineeship.placeofgamesbackend.repository.PlaceRepository;
 import ru.geekbrains.traineeship.placeofgamesbackend.repository.UserRepository;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorType.*;
 import static ru.geekbrains.traineeship.placeofgamesbackend.model.Category.BASKETBALL;
@@ -65,8 +60,6 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
      * 1. Создается список мероприятий и добавляется в базу данных с помощью EventRepository.
      * 2. Вызывается GET /api/v1/events.
      * 3. Проверяется, что в результате запроса получается статус 200 OK и сверяется результат.
-     *
-     * @throws Exception
      */
     @WithMockUser(value = TEST_USER)
     @Test
@@ -118,13 +111,11 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
      * 2. Вызывается GET /api/v1/events.
      * 3. Проверяется, что в результате запроса получается статус 401 Unauthorized.
      * 4. Сверяется, что в ответе отправляется соответствующая ошибка.
-     *
-     * @throws Exception
      */
     @Test
     public void findAllUnauthorized() throws Exception {
 
-        Event event = createEvent();
+        createEvent();
 
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .get(BASE_URL))
@@ -134,7 +125,7 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
                         .isUnauthorized())
                 .andReturn();
 
-        ErrorDTO errorDTO = objectMapper.readValue(result.getResponse().getContentAsString(StandardCharsets.UTF_8), ErrorDTO.class);
+        ErrorDTO errorDTO = getResponse(result, ErrorDTO.class);
 
         Assertions.assertThat(errorDTO.getErrorType()).isEqualTo(USER_UNAUTHORIZED);
         Assertions.assertThat(errorDTO.getMessage()).isEqualTo(USER_UNAUTHORIZED.getDescription());
@@ -148,24 +139,22 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
      * 1. Вызывается GET /api/v1/events/{id} со значением id = 1.
      * 2. Проверяется, что в результате запроса получается статус 404 Not Found.
      * 3. Сверяется, что в ответе отправляется соответствующая ошибка.
-     *
-     * @throws Exception
      */
     @WithMockUser(value = TEST_USER)
     @Test
     public void findByIdNotFound() throws Exception {
 
-        Long id = 1L;
+        long id = 1L;
 
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/" + id.toString()))
+                        .get(BASE_URL + "/" + id))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers
                         .status()
                         .isNotFound())
                 .andReturn();
 
-        ErrorDTO errorDTO = objectMapper.readValue(result.getResponse().getContentAsString(StandardCharsets.UTF_8), ErrorDTO.class);
+        ErrorDTO errorDTO = getResponse(result, ErrorDTO.class);
 
         Assertions.assertThat(errorDTO.getErrorType()).isEqualTo(EVENT_NOT_FOUND);
         Assertions.assertThat(errorDTO.getMessage()).isEqualTo(EVENT_NOT_FOUND.getDescription());
@@ -181,8 +170,6 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
      * 3. Вызывается POST /api/v1/events/{id}/participants со значением id = 1.
      * 4. Проверяется, что в результате запроса получается статус 400 Bad Request.
      * 5. Сверяется, что в ответе отправляется соответствующая ошибка.
-     *
-     * @throws Exception
      */
     @WithMockUser(value = TEST_USER)
     @Test
@@ -200,14 +187,14 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
         eventRepository.save(event);
 
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL +"/"+ event.getId().toString() + "/participants"))
+                        .post(BASE_URL + "/" + event.getId().toString() + "/participants"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers
                         .status()
                         .isBadRequest())
                 .andReturn();
 
-        ErrorDTO errorDTO = objectMapper.readValue(result.getResponse().getContentAsString(StandardCharsets.UTF_8), ErrorDTO.class);
+        ErrorDTO errorDTO = getResponse(result, ErrorDTO.class);
 
         Assertions.assertThat(errorDTO.getErrorType()).isEqualTo(USER_ALREADY_ENROLLED);
         Assertions.assertThat(errorDTO.getMessage()).isEqualTo(USER_ALREADY_ENROLLED.getDescription());
@@ -221,8 +208,6 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
      * 2. Создается пользователь.
      * 3. Вызывается POST /api/v1/events/{id}/participants со значением id = 1.
      * 4. Проверяется, что в результате запроса получается статус 200 OK.
-     *
-     * @throws Exception
      */
     @WithMockUser(value = TEST_USER)
     @Test
@@ -237,7 +222,7 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
         userRepository.save(user);
 
         mvc.perform(MockMvcRequestBuilders
-                        .post(BASE_URL +"/"+ event.getId().toString() + "/participants"))
+                        .post(BASE_URL + "/" + event.getId().toString() + "/participants"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers
                         .status()
@@ -253,8 +238,6 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
      * 2. Создается пользователь и добавляется в список участников мероприятия.
      * 3. Вызывается DELETE /api/v1/events/{id}/participants со значением id = 1.
      * 4. Проверяется, что в результате запроса получается статус 200 OK.
-     *
-     * @throws Exception
      */
     @WithMockUser(value = TEST_USER)
     @Test
@@ -272,7 +255,7 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
         eventRepository.save(event);
 
         mvc.perform(MockMvcRequestBuilders
-                        .delete(BASE_URL +"/"+ event.getId().toString() + "/participants"))
+                        .delete(BASE_URL + "/" + event.getId().toString() + "/participants"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers
                         .status()
@@ -289,8 +272,6 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
      * 3. Вызывается POST /api/v1/events/{id}/participants со значением id = 1.
      * 4. Проверяется, что в результате запроса получается статус 400 Bad Request.
      * 5. Сверяется, что в ответе отправляется соответствующая ошибка.
-     *
-     * @throws Exception
      */
     @WithMockUser(value = TEST_USER)
     @Test
@@ -305,14 +286,14 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
         userRepository.save(user);
 
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .delete(BASE_URL +"/"+ event.getId().toString() + "/participants"))
+                        .delete(BASE_URL + "/" + event.getId().toString() + "/participants"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers
                         .status()
                         .isBadRequest())
                 .andReturn();
 
-        ErrorDTO errorDTO = objectMapper.readValue(result.getResponse().getContentAsString(StandardCharsets.UTF_8), ErrorDTO.class);
+        ErrorDTO errorDTO = getResponse(result, ErrorDTO.class);
 
         Assertions.assertThat(errorDTO.getErrorType()).isEqualTo(CURRENT_USER_NOT_ENROLLED);
         Assertions.assertThat(errorDTO.getMessage()).isEqualTo(CURRENT_USER_NOT_ENROLLED.getDescription());

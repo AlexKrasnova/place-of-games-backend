@@ -76,17 +76,17 @@ public class EventMapperUnitTest {
                 .build();
 
         Mockito.doReturn(PlaceDTO.builder()
-                .id(place.getId())
-                .name(place.getName())
-                .address(place.getAddress())
-                .workingHoursList(Collections.singletonList(WorkingHoursDTO.builder()
-                        .dayOfWeek(workingHoursList.get(0).getDayOfWeek())
-                        .date(workingHoursList.get(0).getDate())
-                        .startTime(workingHoursList.get(0).getStartTime())
-                        .endTime(workingHoursList.get(0).getEndTime())
-                        .build()))
-                .build())
-        .when(placeMapper).mapToPlaceDTO(place);
+                        .id(place.getId())
+                        .name(place.getName())
+                        .address(place.getAddress())
+                        .workingHoursList(Collections.singletonList(WorkingHoursDTO.builder()
+                                .dayOfWeek(workingHoursList.get(0).getDayOfWeek())
+                                .date(workingHoursList.get(0).getDate())
+                                .startTime(workingHoursList.get(0).getStartTime())
+                                .endTime(workingHoursList.get(0).getEndTime())
+                                .build()))
+                        .build())
+                .when(placeMapper).mapToPlaceDTO(place);
 
         EventDTO eventDTO = EventDTO.builder()
                 .id(event.getId())
