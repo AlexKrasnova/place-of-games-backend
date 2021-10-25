@@ -1,9 +1,6 @@
 package ru.geekbrains.traineeship.placeofgamesbackend.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -12,6 +9,7 @@ import java.util.Collection;
 @Table(name = "user_table")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {

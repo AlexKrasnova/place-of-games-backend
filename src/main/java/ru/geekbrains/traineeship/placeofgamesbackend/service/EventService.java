@@ -35,7 +35,7 @@ public class EventService {
         if (users.size() >= event.getMaxNumberOfParticipants()) {
             throw new EventIsFullException();
         }
-        if (users.stream().anyMatch(participant -> participant.getName().equals(user.getName()))) {
+        if (users.stream().anyMatch(participant -> participant.getLogin().equals(user.getLogin()))) {
             throw new UserAlreadyEnrolledException();
         }
         users.add(user);
@@ -48,7 +48,7 @@ public class EventService {
         Set<User> users = event.getParticipants();
         User participantToDelete = null;
         for (User participant : users) {
-            if(participant.getName().equals(user.getName()))
+            if(participant.getLogin().equals(user.getLogin()))
             participantToDelete = participant;
         }
         if(participantToDelete == null) {
