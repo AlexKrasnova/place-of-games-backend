@@ -7,24 +7,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import ru.geekbrains.traineeship.placeofgamesbackend.exception.CurrentUserNotEnrolledException;
 import ru.geekbrains.traineeship.placeofgamesbackend.exception.EventIsFullException;
 import ru.geekbrains.traineeship.placeofgamesbackend.exception.EventNotFoundException;
 import ru.geekbrains.traineeship.placeofgamesbackend.exception.UserAlreadyEnrolledException;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
-import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.User;
-import ru.geekbrains.traineeship.placeofgamesbackend.model.WorkingHours;
 import ru.geekbrains.traineeship.placeofgamesbackend.repository.EventRepository;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static ru.geekbrains.traineeship.placeofgamesbackend.model.Category.BASKETBALL;
-import static ru.geekbrains.traineeship.placeofgamesbackend.model.DayOfWeek.FRIDAY;
 
 @ExtendWith(MockitoExtension.class)
 public class EventServiceUnitTest {
@@ -231,7 +227,6 @@ public class EventServiceUnitTest {
         Mockito.verify(eventRepository, Mockito.times(2)).save(event);
 
     }
-
 
 
     @Test
