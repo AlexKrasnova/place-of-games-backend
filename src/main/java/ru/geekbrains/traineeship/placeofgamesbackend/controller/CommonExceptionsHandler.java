@@ -1,10 +1,9 @@
 package ru.geekbrains.traineeship.placeofgamesbackend.controller;
 
-import lombok.extern.java.Log;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -52,6 +51,9 @@ public class CommonExceptionsHandler {
 
         if (exception instanceof UserAlreadyEnrolledException)
             return process(exception, ErrorType.USER_ALREADY_ENROLLED);
+
+        if (exception instanceof AccessDeniedException)
+            return process(exception, ErrorType.USER_UNAUTHORIZED);
 
         return process(exception, ErrorType.UNEXPECTED_ERROR);
     }

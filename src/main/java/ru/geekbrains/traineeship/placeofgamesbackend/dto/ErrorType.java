@@ -2,6 +2,7 @@ package ru.geekbrains.traineeship.placeofgamesbackend.dto;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Getter
 public enum ErrorType {
@@ -15,7 +16,8 @@ public enum ErrorType {
     UNEXPECTED_ERROR("Неизвестная ошибка", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_REQUEST_PARAMS("Неверные параметры запроса", HttpStatus.BAD_REQUEST),
     CURRENT_USER_NOT_ENROLLED("Текущий пользователь не зарегистрирован на мероприятии", HttpStatus.BAD_REQUEST),
-    USER_ALREADY_ENROLLED("Текущий пользоавтель уже зарегистрирован на мероприятии", HttpStatus.BAD_REQUEST);
+    USER_ALREADY_ENROLLED("Текущий пользоавтель уже зарегистрирован на мероприятии", HttpStatus.BAD_REQUEST),
+    USER_UNAUTHORIZED("Доступ закрыт,", HttpStatus.UNAUTHORIZED);
 
     private String description;
     private HttpStatus httpStatus;
