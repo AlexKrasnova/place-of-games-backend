@@ -14,7 +14,8 @@ create table event
     duration                   integer,
     place_id                   bigserial             not null,
     max_number_of_participants integer,
-    number_of_participants     integer               not null,
     description                text,
+    category                   text,
+    version                    bigserial,
     foreign key (place_id) references place
 );

@@ -15,6 +15,10 @@ import java.util.Collection;
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
     @Column(name = "login")
     private String login;
 
@@ -26,7 +30,7 @@ public class User {
 
     @ManyToMany
     @JoinTable(name = "user_role_link",
-            joinColumns = @JoinColumn(name = "user_login"),
+            joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_name"))
     private Collection<Role> roles;
 }

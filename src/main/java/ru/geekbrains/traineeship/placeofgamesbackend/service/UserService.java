@@ -28,21 +28,26 @@ public class UserService {
     }
 
     public User findByLogin(String login) {
-        return userRepository.findById(login).orElseThrow(UserNotFoundException::new);
+        return userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
     }
 
     public void createUser(String login, String password, String name) {
-        userRepository.findById(login).ifPresent(user -> {
+        userRepository.findByLogin(login).ifPresent(user -> {
             throw new UserAlreadyExistsException();
         });
         Role role = roleRepository.findById("ROLE_USER").orElseThrow(() -> new IllegalStateException("Role 'ROLE_USER' not found"));
-        User user = new User(login, passwordEncoder.encode(password), name, List.of(role));
+        User user = User.builder()
+                .login(login)
+                .password(passwordEncoder.encode(password))
+                .name(name)
+                .roles(List.of(role))
+                .build();
         userRepository.save(user);
     }
 
 
     public User findByLoginAndPassword(String login, String password) {
-        User userEntity = userRepository.findById(login).orElseThrow(UserNotFoundException::new);
+        User userEntity = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
         if (passwordEncoder.matches(password, userEntity.getPassword())) {
             return userEntity;
         } else {

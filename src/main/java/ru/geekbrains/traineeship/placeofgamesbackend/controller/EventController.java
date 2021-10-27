@@ -28,12 +28,12 @@ public class EventController {
     }
 
     @PostMapping("/{id}/participants")
-    public void addParticipant (@PathVariable Long id, Principal principal) {
+    public void addParticipant(@PathVariable Long id, Principal principal) {
         eventProcessor.addParticipant(id, principal.getName());
     }
 
     @DeleteMapping("/{id}/participants")
-    public void deleteParticipant (@PathVariable Long id, Principal principal) {
+    public void deleteParticipant(@PathVariable Long id, Principal principal) {
         eventProcessor.deleteParticipant(id, principal.getName());
     }
 

@@ -10,10 +10,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.geekbrains.traineeship.placeofgamesbackend.AbstractIntegrationTest;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.PlaceDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.WorkingHoursDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.*;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.User;
@@ -65,7 +62,16 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void findAllSuccess() throws Exception {
 
+        User user = User.builder()
+                .login(TEST_USER)
+                .name("Вася")
+                .build();
+        userRepository.save(user);
+
         Event event = createEvent();
+
+        event.getParticipants().add(user);
+        eventRepository.save(event);
 
         List<EventDTO> eventDTOList = new ArrayList<>();
         eventDTOList.add(EventDTO.builder()
@@ -88,7 +94,11 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
                 .description(event.getDescription())
                 .category(event.getCategory())
                 .numberOfParticipants(event.getParticipants().size())
-                .isCurrentUserEnrolled(false)
+                .isCurrentUserEnrolled(true)
+                .participants(Collections.singleton(UserDTO.builder()
+                        .id(user.getId())
+                        .name(user.getName())
+                        .build()))
                 .build());
 
         mvc.perform(MockMvcRequestBuilders

@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.PlaceDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.UserDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.WorkingHoursDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static ru.geekbrains.traineeship.placeofgamesbackend.model.Category.BASKETBALL;
 import static ru.geekbrains.traineeship.placeofgamesbackend.model.DayOfWeek.FRIDAY;
@@ -30,6 +32,9 @@ public class EventMapperUnitTest {
 
     @Mock
     private PlaceMapper placeMapper;
+
+    @Mock
+    private UserMapper userMapper;
 
     @InjectMocks
     private EventMapper eventMapper;
@@ -45,7 +50,7 @@ public class EventMapperUnitTest {
     @Test
     public void mapToEventDTOSuccess() {
 
-        String currentUser = "user";
+        String currentUserLogin = "user";
 
         List<WorkingHours> workingHoursList = new ArrayList<>();
         workingHoursList
@@ -61,7 +66,13 @@ public class EventMapperUnitTest {
                 .workingHoursList(workingHoursList)
                 .build();
 
-        Set<User> participants = Collections.emptySet();
+        User user = User.builder()
+                .id(1L)
+                .name("Вася")
+                .login("user1")
+                .password("1")
+                .build();
+        Set<User> participants = Collections.singleton(user);
 
         Event event = Event.builder()
                 .name("Баскетбол для любителей")
@@ -88,6 +99,12 @@ public class EventMapperUnitTest {
                         .build())
                 .when(placeMapper).mapToPlaceDTO(place);
 
+        Mockito.doReturn(UserDTO.builder()
+                        .id(user.getId())
+                        .name(user.getName())
+                        .build())
+                .when(userMapper).mapToUserDTO(user);
+
         EventDTO eventDTO = EventDTO.builder()
                 .id(event.getId())
                 .name(event.getName())
@@ -99,9 +116,10 @@ public class EventMapperUnitTest {
                 .category(event.getCategory())
                 .numberOfParticipants(event.getParticipants().size())
                 .isCurrentUserEnrolled(false)
+                .participants(participants.stream().map(userMapper::mapToUserDTO).collect(Collectors.toSet()))
                 .build();
 
-        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUser)).isEqualTo(eventDTO);
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin)).isEqualTo(eventDTO);
 
     }
 }

@@ -21,24 +21,24 @@ public class EventProcessor {
 
     private final EventMapper eventMapper;
 
-    public List<EventDTO> findAll(String currentUser) {
+    public List<EventDTO> findAll(String currentUserLogin) {
         return eventService
                 .findAll()
                 .stream()
-                .map(event -> eventMapper.mapToEventDTO(event, currentUser))
+                .map(event -> eventMapper.mapToEventDTO(event, currentUserLogin))
                 .collect(Collectors.toList());
     }
 
-    public EventDTO findById(Long eventId, String currentUser) {
+    public EventDTO findById(Long eventId, String currentUserLogin) {
         Event event = eventService.findById(eventId);
-        return eventMapper.mapToEventDTO(event, currentUser);
+        return eventMapper.mapToEventDTO(event, currentUserLogin);
     }
 
-    public void addParticipant(Long eventId, String currentUser) {
-        eventService.addParticipant(eventId, userService.findByLogin(currentUser));
+    public void addParticipant(Long eventId, String currentUserLogin) {
+        eventService.addParticipant(eventId, userService.findByLogin(currentUserLogin));
     }
 
-    public void deleteParticipant(Long eventId, String currentUser) {
-        eventService.deleteParticipant(eventId, userService.findByLogin(currentUser));
+    public void deleteParticipant(Long eventId, String currentUserLogin) {
+        eventService.deleteParticipant(eventId, userService.findByLogin(currentUserLogin));
     }
 }

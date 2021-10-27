@@ -92,8 +92,10 @@ public class EventServiceUnitTest {
     public void addParticipantUserAlreadyEnrolled() {
 
         Long id = 1L;
+        Long userId = 1L;
 
         User user = User.builder()
+                .id(userId)
                 .login("user")
                 .build();
 
@@ -201,12 +203,15 @@ public class EventServiceUnitTest {
 
         Long id = 1L;
 
+
         User user = User.builder()
+                .id(1L)
                 .login("user")
                 .name("user")
                 .build();
 
         User user1 = User.builder()
+                .id(2L)
                 .login("user1")
                 .name("user")
                 .build();
@@ -266,8 +271,10 @@ public class EventServiceUnitTest {
     @Test
     public void deleteParticipantSuccess() {
         Long id = 1L;
+        Long userId = 1L;
 
         User user = User.builder()
+                .id(userId)
                 .login("user")
                 .build();
 

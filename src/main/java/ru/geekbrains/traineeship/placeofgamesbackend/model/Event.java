@@ -49,7 +49,7 @@ public class Event {
     @ManyToMany
     @JoinTable(name = "event_participant",
             joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_login"))
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> participants;
 
     @Version

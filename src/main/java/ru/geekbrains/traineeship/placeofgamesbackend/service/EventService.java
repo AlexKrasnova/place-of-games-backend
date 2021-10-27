@@ -48,10 +48,10 @@ public class EventService {
         Set<User> users = event.getParticipants();
         User participantToDelete = null;
         for (User participant : users) {
-            if(participant.getLogin().equals(user.getLogin()))
-            participantToDelete = participant;
+            if (participant.getLogin().equals(user.getLogin()))
+                participantToDelete = participant;
         }
-        if(participantToDelete == null) {
+        if (participantToDelete == null) {
             throw new CurrentUserNotEnrolledException();
         }
         users.remove(participantToDelete);
