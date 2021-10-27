@@ -11,6 +11,8 @@ import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDetailsDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.PlaceDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.UserDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.UserDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.WorkingHoursDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.User;
@@ -129,6 +131,24 @@ public class EventMapperUnitTest {
                 .name("Стадион")
                 .address("ул. Ленина, д. 1")
                 .workingHoursList(workingHoursList)
+        Mockito.doReturn(UserDTO.builder()
+                        .id(user.getId())
+                        .name(user.getName())
+                        .build())
+                .when(userMapper).mapToUserDTO(user);
+
+        EventDTO eventDTO = EventDTO.builder()
+                .id(event.getId())
+                .name(event.getName())
+                .time(event.getTime())
+                .duration(event.getDuration())
+                .place(placeMapper.mapToPlaceDTO(place))
+                .maxNumberOfParticipants(event.getMaxNumberOfParticipants())
+                .description(event.getDescription())
+                .category(event.getCategory())
+                .numberOfParticipants(event.getParticipants().size())
+                .isCurrentUserEnrolled(false)
+                .participants(participants.stream().map(userMapper::mapToUserDTO).collect(Collectors.toSet()))
                 .build();
 
         User user = User.builder()
@@ -175,6 +195,7 @@ public class EventMapperUnitTest {
         Assertions.assertThat(result.getDescription()).isEqualTo(event.getDescription());
         Assertions.assertThat(result.getIsCurrentUserEnrolled()).isEqualTo(false);
         Assertions.assertThat(result.getParticipants()).isEqualTo(event.getParticipants().stream().map(userMapper::mapToUserDTO).collect(Collectors.toSet()));
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin)).isEqualTo(eventDTO);
 
     }
 }
