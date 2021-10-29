@@ -6,5 +6,5 @@ create table working_hours
     date        date,
     start_time  time                  not null,
     end_time    time                  not null,
-    foreign key (place_id) references place
+    foreign key (place_id) references place on delete cascade on update cascade
 )

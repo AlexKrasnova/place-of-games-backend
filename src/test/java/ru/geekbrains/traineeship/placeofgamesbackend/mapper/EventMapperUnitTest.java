@@ -119,7 +119,17 @@ public class EventMapperUnitTest {
                 .participants(participants.stream().map(userMapper::mapToUserDTO).collect(Collectors.toSet()))
                 .build();
 
-        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin)).isEqualTo(eventDTO);
-
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getId()).isEqualTo(eventDTO.getId());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getName()).isEqualTo(eventDTO.getName());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getTime()).isEqualTo(eventDTO.getTime());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getDuration()).isEqualTo(eventDTO.getDuration());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getPlace()).isEqualTo(eventDTO.getPlace());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getDescription()).isEqualTo(eventDTO.getDescription());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getMaxNumberOfParticipants()).isEqualTo(eventDTO.getMaxNumberOfParticipants());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getCategory()).isEqualTo(eventDTO.getCategory());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getParticipants().size()).isEqualTo(eventDTO.getNumberOfParticipants());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getIsCurrentUserEnrolled()).isEqualTo(eventDTO.getIsCurrentUserEnrolled());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getParticipants()).isEqualTo(eventDTO.getParticipants());
+        
     }
 }

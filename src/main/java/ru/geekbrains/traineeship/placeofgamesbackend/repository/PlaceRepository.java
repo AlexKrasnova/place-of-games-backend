@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface PlaceRepository extends JpaRepository<Place, Long> {
 
-    @Query("select p from Place p join fetch p.workingHoursList")
+    @Query("select distinct p from Place p join fetch p.workingHoursList")
     List<Place> findAllWithWorkingHours();
 
 }
