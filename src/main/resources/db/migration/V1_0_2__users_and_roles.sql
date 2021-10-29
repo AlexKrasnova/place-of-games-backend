@@ -11,10 +11,12 @@ create table user_table
     name     varchar(50)
 );
 
+create unique index login_index on user_table (login);
+
 create table user_role_link
 (
-    user_id bigserial not null,
-    role_name  varchar(20) not null,
+    user_id   bigserial   not null,
+    role_name varchar(20) not null,
     primary key (user_id, role_name),
     foreign key (user_id) references user_table,
     foreign key (role_name) references role_table

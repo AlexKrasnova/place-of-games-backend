@@ -8,9 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDetailsDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.PlaceDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.UserDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.UserDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.WorkingHoursDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
@@ -95,42 +93,6 @@ public class EventMapperUnitTest {
                         .build())
                 .when(placeMapper).mapToPlaceDTO(place);
 
-        EventDTO result = eventMapper.mapToEventDTO(event, currentUserLogin);
-        Assertions.assertThat(result.getId()).isEqualTo(event.getId());
-        Assertions.assertThat(result.getName()).isEqualTo(event.getName());
-        Assertions.assertThat(result.getTime()).isEqualTo(event.getTime());
-        Assertions.assertThat(result.getDuration()).isEqualTo(event.getDuration());
-        Assertions.assertThat(result.getPlace()).isEqualTo(placeMapper.mapToPlaceDTO(place));
-        Assertions.assertThat(result.getMaxNumberOfParticipants()).isEqualTo(event.getMaxNumberOfParticipants());
-        Assertions.assertThat(result.getCategory()).isEqualTo(event.getCategory());
-        Assertions.assertThat(result.getIsCurrentUserEnrolled()).isEqualTo(false);
-    }
-
-    /**
-     * Unit-тест на проверку корректной работы метода mapToEventDTO в маппере мероприятий.
-     * <p>
-     * В тесте:
-     * 1. Создается Event event и EventDTO eventDTO с соответствующими значениями полей.
-     * 2. Мочится метод mapToPlaceDTO в маппере площадок.
-     * 3. Проверяется, что результат вызова метода mapToEventDTO в маппере мероприятий совпадает с созданным в тесте eventDTO.
-     */
-    @Test
-    public void mapToEventDetailsDTOSuccess() {
-
-        String currentUserLogin = "user";
-
-        List<WorkingHours> workingHoursList = new ArrayList<>();
-        workingHoursList
-                .add(WorkingHours.builder()
-                        .dayOfWeek(FRIDAY)
-                        .startTime(LocalTime.of(10, 00))
-                        .endTime(LocalTime.of(16, 00))
-                        .build());
-
-        Place place = Place.builder()
-                .name("Стадион")
-                .address("ул. Ленина, д. 1")
-                .workingHoursList(workingHoursList)
         Mockito.doReturn(UserDTO.builder()
                         .id(user.getId())
                         .name(user.getName())
@@ -196,6 +158,18 @@ public class EventMapperUnitTest {
         Assertions.assertThat(result.getIsCurrentUserEnrolled()).isEqualTo(false);
         Assertions.assertThat(result.getParticipants()).isEqualTo(event.getParticipants().stream().map(userMapper::mapToUserDTO).collect(Collectors.toSet()));
         Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin)).isEqualTo(eventDTO);
+
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getId()).isEqualTo(eventDTO.getId());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getName()).isEqualTo(eventDTO.getName());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getTime()).isEqualTo(eventDTO.getTime());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getDuration()).isEqualTo(eventDTO.getDuration());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getPlace()).isEqualTo(eventDTO.getPlace());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getDescription()).isEqualTo(eventDTO.getDescription());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getMaxNumberOfParticipants()).isEqualTo(eventDTO.getMaxNumberOfParticipants());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getCategory()).isEqualTo(eventDTO.getCategory());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getParticipants().size()).isEqualTo(eventDTO.getNumberOfParticipants());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getIsCurrentUserEnrolled()).isEqualTo(eventDTO.getIsCurrentUserEnrolled());
+        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getParticipants()).isEqualTo(eventDTO.getParticipants());
 
     }
 }
