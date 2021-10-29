@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ru.geekbrains.traineeship</groupId>
 	<artifactId>place-of-games-backend</artifactId>
-	<version>0.0.5</version>
+	<version>0.0.6</version>
 	<name>place-of-games-backend</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
