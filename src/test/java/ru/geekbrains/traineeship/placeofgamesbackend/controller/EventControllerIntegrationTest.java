@@ -10,7 +10,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.geekbrains.traineeship.placeofgamesbackend.AbstractIntegrationTest;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.*;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.PlaceDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.User;
@@ -21,7 +23,10 @@ import ru.geekbrains.traineeship.placeofgamesbackend.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorType.*;
 import static ru.geekbrains.traineeship.placeofgamesbackend.model.Category.BASKETBALL;
@@ -83,22 +88,11 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
                         .id(event.getPlaceId())
                         .name(event.getPlace().getName())
                         .address(event.getPlace().getAddress())
-                        .workingHoursList(Collections.singletonList(WorkingHoursDTO.builder()
-                                .dayOfWeek(event.getPlace().getWorkingHoursList().get(0).getDayOfWeek())
-                                .date(event.getPlace().getWorkingHoursList().get(0).getDate())
-                                .startTime(event.getPlace().getWorkingHoursList().get(0).getStartTime())
-                                .endTime(event.getPlace().getWorkingHoursList().get(0).getEndTime())
-                                .build()))
                         .build())
                 .maxNumberOfParticipants(event.getMaxNumberOfParticipants())
-                .description(event.getDescription())
                 .category(event.getCategory())
                 .numberOfParticipants(event.getParticipants().size())
                 .isCurrentUserEnrolled(true)
-                .participants(Collections.singleton(UserDTO.builder()
-                        .id(user.getId())
-                        .name(user.getName())
-                        .build()))
                 .build());
 
         mvc.perform(MockMvcRequestBuilders

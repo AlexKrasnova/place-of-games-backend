@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.PlaceDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.UserDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.WorkingHoursDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.User;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static ru.geekbrains.traineeship.placeofgamesbackend.model.Category.BASKETBALL;
 import static ru.geekbrains.traineeship.placeofgamesbackend.model.DayOfWeek.FRIDAY;
@@ -90,12 +88,6 @@ public class EventMapperUnitTest {
                         .id(place.getId())
                         .name(place.getName())
                         .address(place.getAddress())
-                        .workingHoursList(Collections.singletonList(WorkingHoursDTO.builder()
-                                .dayOfWeek(workingHoursList.get(0).getDayOfWeek())
-                                .date(workingHoursList.get(0).getDate())
-                                .startTime(workingHoursList.get(0).getStartTime())
-                                .endTime(workingHoursList.get(0).getEndTime())
-                                .build()))
                         .build())
                 .when(placeMapper).mapToPlaceDTO(place);
 
@@ -112,11 +104,9 @@ public class EventMapperUnitTest {
                 .duration(event.getDuration())
                 .place(placeMapper.mapToPlaceDTO(place))
                 .maxNumberOfParticipants(event.getMaxNumberOfParticipants())
-                .description(event.getDescription())
                 .category(event.getCategory())
                 .numberOfParticipants(event.getParticipants().size())
                 .isCurrentUserEnrolled(false)
-                .participants(participants.stream().map(userMapper::mapToUserDTO).collect(Collectors.toSet()))
                 .build();
 
         Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getId()).isEqualTo(eventDTO.getId());
@@ -124,12 +114,8 @@ public class EventMapperUnitTest {
         Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getTime()).isEqualTo(eventDTO.getTime());
         Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getDuration()).isEqualTo(eventDTO.getDuration());
         Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getPlace()).isEqualTo(eventDTO.getPlace());
-        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getDescription()).isEqualTo(eventDTO.getDescription());
         Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getMaxNumberOfParticipants()).isEqualTo(eventDTO.getMaxNumberOfParticipants());
         Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getCategory()).isEqualTo(eventDTO.getCategory());
-        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getParticipants().size()).isEqualTo(eventDTO.getNumberOfParticipants());
         Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getIsCurrentUserEnrolled()).isEqualTo(eventDTO.getIsCurrentUserEnrolled());
-        Assertions.assertThat(eventMapper.mapToEventDTO(event, currentUserLogin).getParticipants()).isEqualTo(eventDTO.getParticipants());
-        
     }
 }

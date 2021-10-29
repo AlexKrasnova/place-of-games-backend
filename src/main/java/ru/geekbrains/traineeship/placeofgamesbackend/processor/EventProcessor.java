@@ -3,6 +3,7 @@ package ru.geekbrains.traineeship.placeofgamesbackend.processor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDetailsDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.mapper.EventMapper;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.service.EventService;
@@ -29,9 +30,9 @@ public class EventProcessor {
                 .collect(Collectors.toList());
     }
 
-    public EventDTO findById(Long eventId, String currentUserLogin) {
+    public EventDetailsDTO findById(Long eventId, String currentUserLogin) {
         Event event = eventService.findById(eventId);
-        return eventMapper.mapToEventDTO(event, currentUserLogin);
+        return eventMapper.mapToEventDetailsDTO(event, currentUserLogin);
     }
 
     public void addParticipant(Long eventId, String currentUserLogin) {
