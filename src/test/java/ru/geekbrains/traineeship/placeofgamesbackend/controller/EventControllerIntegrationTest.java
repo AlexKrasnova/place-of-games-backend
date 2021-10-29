@@ -13,7 +13,6 @@ import ru.geekbrains.traineeship.placeofgamesbackend.AbstractIntegrationTest;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.PlaceDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.WorkingHoursDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.User;

@@ -5,7 +5,6 @@ import lombok.Data;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Category;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Data
 @Builder
@@ -31,6 +30,4 @@ public class EventDTO {
      * Признак того, что текущий пользователь уже записан на данное мероприятие
      */
     private Boolean isCurrentUserEnrolled;
-
-    private Set<UserDTO> participants;
 }
