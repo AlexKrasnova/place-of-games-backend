@@ -6,7 +6,7 @@ create table role_table
 create table user_table
 (
     id       bigserial primary key,
-    login    varchar(50) unique not null,
+    login    varchar(50) not null,
     password varchar(500),
     name     varchar(50)
 );
