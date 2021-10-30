@@ -2,7 +2,6 @@ package ru.geekbrains.traineeship.placeofgamesbackend.dto;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Getter
 public enum ErrorType {
@@ -20,6 +19,7 @@ public enum ErrorType {
     USER_UNAUTHORIZED("Доступ закрыт,", HttpStatus.UNAUTHORIZED);
 
     private String description;
+
     private HttpStatus httpStatus;
 
     ErrorType(String description, HttpStatus httpStatus) {

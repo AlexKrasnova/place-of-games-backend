@@ -8,7 +8,9 @@ import lombok.Data;
 public class PlaceDTO {
 
     private Long id;
+
     private String name;
+
     private String address;
 
 }
