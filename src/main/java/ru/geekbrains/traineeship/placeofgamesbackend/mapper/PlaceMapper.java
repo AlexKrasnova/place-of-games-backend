@@ -3,6 +3,7 @@ package ru.geekbrains.traineeship.placeofgamesbackend.mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.PlaceDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.PlaceDetailsDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 
 import java.util.stream.Collectors;
@@ -15,6 +16,14 @@ public class PlaceMapper {
 
     public PlaceDTO mapToPlaceDTO(Place place) {
         return PlaceDTO.builder()
+                .id(place.getId())
+                .name(place.getName())
+                .address(place.getAddress())
+                .build();
+    }
+
+    public PlaceDetailsDTO mapToPlaceDetailsDTO(Place place) {
+        return PlaceDetailsDTO.builder()
                 .id(place.getId())
                 .name(place.getName())
                 .address(place.getAddress())

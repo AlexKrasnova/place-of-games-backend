@@ -12,8 +12,11 @@ import java.time.LocalTime;
 public class WorkingHoursDTO {
 
     private DayOfWeek dayOfWeek;
+
     private LocalDate date;
+
     private LocalTime startTime;
+
     private LocalTime endTime;
 
 }

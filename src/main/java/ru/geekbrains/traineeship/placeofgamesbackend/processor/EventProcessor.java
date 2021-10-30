@@ -3,6 +3,7 @@ package ru.geekbrains.traineeship.placeofgamesbackend.processor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDetailsDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.mapper.EventMapper;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.service.EventService;
@@ -21,24 +22,24 @@ public class EventProcessor {
 
     private final EventMapper eventMapper;
 
-    public List<EventDTO> findAll(String currentUser) {
+    public List<EventDTO> findAll(String currentUserLogin) {
         return eventService
                 .findAll()
                 .stream()
-                .map(event -> eventMapper.mapToEventDTO(event, currentUser))
+                .map(event -> eventMapper.mapToEventDTO(event, currentUserLogin))
                 .collect(Collectors.toList());
     }
 
-    public EventDTO findById(Long eventId, String currentUser) {
+    public EventDetailsDTO findById(Long eventId, String currentUserLogin) {
         Event event = eventService.findById(eventId);
-        return eventMapper.mapToEventDTO(event, currentUser);
+        return eventMapper.mapToEventDetailsDTO(event, currentUserLogin);
     }
 
-    public void addParticipant(Long eventId, String currentUser) {
-        eventService.addParticipant(eventId, userService.findByLogin(currentUser));
+    public void addParticipant(Long eventId, String currentUserLogin) {
+        eventService.addParticipant(eventId, userService.findByLogin(currentUserLogin));
     }
 
-    public void deleteParticipant(Long eventId, String currentUser) {
-        eventService.deleteParticipant(eventId, userService.findByLogin(currentUser));
+    public void deleteParticipant(Long eventId, String currentUserLogin) {
+        eventService.deleteParticipant(eventId, userService.findByLogin(currentUserLogin));
     }
 }

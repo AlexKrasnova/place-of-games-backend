@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDetailsDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.processor.EventProcessor;
 
 import java.security.Principal;
@@ -23,17 +24,17 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public EventDTO findById(@PathVariable Long id, Principal principal) {
+    public EventDetailsDTO findById(@PathVariable Long id, Principal principal) {
         return eventProcessor.findById(id, principal.getName());
     }
 
     @PostMapping("/{id}/participants")
-    public void addParticipant (@PathVariable Long id, Principal principal) {
+    public void addParticipant(@PathVariable Long id, Principal principal) {
         eventProcessor.addParticipant(id, principal.getName());
     }
 
     @DeleteMapping("/{id}/participants")
-    public void deleteParticipant (@PathVariable Long id, Principal principal) {
+    public void deleteParticipant(@PathVariable Long id, Principal principal) {
         eventProcessor.deleteParticipant(id, principal.getName());
     }
 

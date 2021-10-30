@@ -13,7 +13,6 @@ import ru.geekbrains.traineeship.placeofgamesbackend.AbstractIntegrationTest;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.PlaceDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.WorkingHoursDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.User;
@@ -24,7 +23,10 @@ import ru.geekbrains.traineeship.placeofgamesbackend.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorType.*;
 import static ru.geekbrains.traineeship.placeofgamesbackend.model.Category.BASKETBALL;
@@ -65,7 +67,16 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void findAllSuccess() throws Exception {
 
+        User user = User.builder()
+                .login(TEST_USER)
+                .name("Вася")
+                .build();
+        userRepository.save(user);
+
         Event event = createEvent();
+
+        event.getParticipants().add(user);
+        eventRepository.save(event);
 
         List<EventDTO> eventDTOList = new ArrayList<>();
         eventDTOList.add(EventDTO.builder()
@@ -77,18 +88,11 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
                         .id(event.getPlaceId())
                         .name(event.getPlace().getName())
                         .address(event.getPlace().getAddress())
-                        .workingHoursList(Collections.singletonList(WorkingHoursDTO.builder()
-                                .dayOfWeek(event.getPlace().getWorkingHoursList().get(0).getDayOfWeek())
-                                .date(event.getPlace().getWorkingHoursList().get(0).getDate())
-                                .startTime(event.getPlace().getWorkingHoursList().get(0).getStartTime())
-                                .endTime(event.getPlace().getWorkingHoursList().get(0).getEndTime())
-                                .build()))
                         .build())
                 .maxNumberOfParticipants(event.getMaxNumberOfParticipants())
-                .description(event.getDescription())
                 .category(event.getCategory())
                 .numberOfParticipants(event.getParticipants().size())
-                .isCurrentUserEnrolled(false)
+                .isCurrentUserEnrolled(true)
                 .build());
 
         mvc.perform(MockMvcRequestBuilders
