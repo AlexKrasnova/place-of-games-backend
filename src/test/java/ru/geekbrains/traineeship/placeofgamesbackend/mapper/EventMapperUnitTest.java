@@ -16,6 +16,7 @@ import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.User;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.WorkingHours;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -25,7 +26,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static ru.geekbrains.traineeship.placeofgamesbackend.model.Category.BASKETBALL;
-import static ru.geekbrains.traineeship.placeofgamesbackend.model.DayOfWeek.FRIDAY;
 
 @ExtendWith(MockitoExtension.class)
 public class EventMapperUnitTest {
@@ -55,7 +55,7 @@ public class EventMapperUnitTest {
         List<WorkingHours> workingHoursList = new ArrayList<>();
         workingHoursList
                 .add(WorkingHours.builder()
-                        .dayOfWeek(FRIDAY)
+                        .dayOfWeek(DayOfWeek.FRIDAY)
                         .startTime(LocalTime.of(10, 00))
                         .endTime(LocalTime.of(16, 00))
                         .build());
@@ -120,7 +120,7 @@ public class EventMapperUnitTest {
         List<WorkingHours> workingHoursList = new ArrayList<>();
         workingHoursList
                 .add(WorkingHours.builder()
-                        .dayOfWeek(FRIDAY)
+                        .dayOfWeek(DayOfWeek.FRIDAY)
                         .startTime(LocalTime.of(10, 00))
                         .endTime(LocalTime.of(16, 00))
                         .build());

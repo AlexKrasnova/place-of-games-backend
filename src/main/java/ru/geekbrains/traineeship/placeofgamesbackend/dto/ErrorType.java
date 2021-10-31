@@ -16,7 +16,8 @@ public enum ErrorType {
     INVALID_REQUEST_PARAMS("Неверные параметры запроса", HttpStatus.BAD_REQUEST),
     CURRENT_USER_NOT_ENROLLED("Текущий пользователь не зарегистрирован на мероприятии", HttpStatus.BAD_REQUEST),
     USER_ALREADY_ENROLLED("Текущий пользоавтель уже зарегистрирован на мероприятии", HttpStatus.BAD_REQUEST),
-    USER_UNAUTHORIZED("Доступ закрыт,", HttpStatus.UNAUTHORIZED);
+    USER_UNAUTHORIZED("Доступ закрыт,", HttpStatus.UNAUTHORIZED),
+    PLACE_NOT_WORKING("Площадка не работает в указанное время", HttpStatus.BAD_REQUEST);
 
     private String description;
 

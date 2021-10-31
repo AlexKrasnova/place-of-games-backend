@@ -21,6 +21,7 @@ import ru.geekbrains.traineeship.placeofgamesbackend.repository.EventRepository;
 import ru.geekbrains.traineeship.placeofgamesbackend.repository.PlaceRepository;
 import ru.geekbrains.traineeship.placeofgamesbackend.repository.UserRepository;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -30,7 +31,6 @@ import java.util.Set;
 
 import static ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorType.*;
 import static ru.geekbrains.traineeship.placeofgamesbackend.model.Category.BASKETBALL;
-import static ru.geekbrains.traineeship.placeofgamesbackend.model.DayOfWeek.FRIDAY;
 
 
 public class EventControllerIntegrationTest extends AbstractIntegrationTest {
@@ -309,7 +309,7 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
         List<WorkingHours> workingHoursList = new ArrayList<>();
         workingHoursList
                 .add(WorkingHours.builder()
-                        .dayOfWeek(FRIDAY)
+                        .dayOfWeek(DayOfWeek.FRIDAY)
                         .startTime(LocalTime.of(10, 00))
                         .endTime(LocalTime.of(16, 00))
                         .build());

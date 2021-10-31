@@ -55,6 +55,9 @@ public class CommonExceptionsHandler {
         if (exception instanceof AccessDeniedException)
             return process(exception, ErrorType.USER_UNAUTHORIZED);
 
+        if (exception instanceof PlaceNotWorkingException)
+            return process(exception, ErrorType.PLACE_NOT_WORKING);
+
         return process(exception, ErrorType.UNEXPECTED_ERROR);
     }
 
