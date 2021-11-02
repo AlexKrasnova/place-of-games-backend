@@ -55,15 +55,18 @@ public class PlaceService {
         LocalDateTime endTimeTemp = startTime;
 
         for (int i = 0; i < eventTimes.size(); i++) {
-            if (startTimeTemp.compareTo(eventTimes.get(i).getStartTime()) < 0) {
-                endTimeTemp = eventTimes.get(i).getStartTime();
+            if (i == 0 || !eventTimes.get(i - 1).getEndTime().equals(eventTimes.get(i).getStartTime())) {
+                if (startTimeTemp.compareTo(eventTimes.get(i).getStartTime()) < 0) {
+                    endTimeTemp = eventTimes.get(i).getStartTime();
+                }
+
+                freeTimePeriods.add(TimePeriod.builder()
+                        .startTime(startTimeTemp)
+                        .endTime(endTimeTemp)
+                        .build());
+
+
             }
-
-            freeTimePeriods.add(TimePeriod.builder()
-                    .startTime(startTimeTemp)
-                    .endTime(endTimeTemp)
-                    .build());
-
             startTimeTemp = eventTimes.get(i).getEndTime();
         }
 
@@ -79,7 +82,7 @@ public class PlaceService {
 
     private List<TimePeriod> getEventTimesByDate(Long id, LocalDateTime startTime, LocalDateTime endTime) {
 
-        List<Event> events = eventRepository.getEventsByPlaceAndDate(id, startTime, endTime);
+        List<Event> events = eventRepository.getEventsByPlaceAndTimePeriod(id, startTime, endTime);
 
         List<TimePeriod> eventTimes = new ArrayList<>();
         for (Event event : events) {

@@ -15,6 +15,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findAllWithPlacesAndUsers();
 
     @Query("select e from Event e where e.placeId =:placeId and e.time between :time1 and :time2")
-    List<Event> getEventsByPlaceAndDate(@Param("placeId") Long placeId, @Param("time1") LocalDateTime time1, @Param("time2") LocalDateTime time2);
+    List<Event> getEventsByPlaceAndTimePeriod(@Param("placeId") Long placeId, @Param("time1") LocalDateTime time1, @Param("time2") LocalDateTime time2);
 
 }
