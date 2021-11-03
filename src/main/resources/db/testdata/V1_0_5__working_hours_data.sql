@@ -1,5 +1,5 @@
 insert into working_hours (place_id, day_of_week, start_time, end_time)
-values (1, 'MONDAY', '09:00:00', '21:00:00'),
+values (1, 'MONDAY', '09:00:00', '01:00:00'),
        (1, 'WEDNESDAY', '09:00:00', '21:00:00'),
        (1, 'FRIDAY', '09:00:00', '21:00:00'),
        (1, 'SATURDAY', '09:00:00', '21:00:00'),

@@ -1,5 +1,6 @@
 package ru.geekbrains.traineeship.placeofgamesbackend;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,11 @@ public class AbstractIntegrationTest {
 
     @SneakyThrows
     protected <T> T getResponse(MvcResult mvcResult, Class<T> valueType) {
+        return objectMapper.readValue(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), valueType);
+    }
+
+    @SneakyThrows
+    protected <T> T getResponse(MvcResult mvcResult, TypeReference<T> valueType) {
         return objectMapper.readValue(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), valueType);
     }
 

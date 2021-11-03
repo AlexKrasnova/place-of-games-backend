@@ -2,8 +2,8 @@ package ru.geekbrains.traineeship.placeofgamesbackend.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.geekbrains.traineeship.placeofgamesbackend.model.DayOfWeek;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
