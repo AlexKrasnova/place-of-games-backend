@@ -14,7 +14,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
         // todo: Разобраться, почему не работает такой запрос @Query("select e from Event e join fetch e.place join fetch e.place.workingHoursList")
     List<Event> findAllWithPlacesAndUsers();
 
-    @Query("select e from Event e where e.placeId =:placeId and e.time between :time1 and :time2")
+    @Query("select e from Event e where e.placeId =:placeId and e.time between :time1 and :time2 order by e.time asc")
     List<Event> getEventsByPlaceAndTimePeriod(@Param("placeId") Long placeId, @Param("time1") LocalDateTime time1, @Param("time2") LocalDateTime time2);
 
 }

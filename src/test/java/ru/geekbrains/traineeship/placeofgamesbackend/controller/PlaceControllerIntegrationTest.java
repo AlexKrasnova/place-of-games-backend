@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.geekbrains.traineeship.placeofgamesbackend.AbstractIntegrationTest;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.TimePeriodDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
@@ -24,8 +23,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorType.PLACE_NOT_WORKING;
 
 public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
 
@@ -45,10 +42,10 @@ public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
 
     /**
      * Интеграционный тест на проверку успешного поиска свободного времени на площадке на выбранную дату,
-     * когда никаких мероприятий на эту дату не запланированно.
+     * когда никаких мероприятий на эту дату не запланировано.
      * <p>
      * В тесте:
-     * 1. Создается создается и добавляется в базу данных площадка с режимом работы.
+     * 1. Создается и добавляется в базу данных площадка с режимом работы.
      * 2. Вызывается GET /api/v1/places/{id}/free-time c id созданной площадки.
      * 3. Проверяется, что в результате запроса получается статус 200 OK и сверяется результат -
      * свободное время соответствует времени работы площадки в выбранный день.
@@ -72,6 +69,7 @@ public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
         List<TimePeriodDTO> actual = getResponse(result, new TypeReference<>() {
         });
 
+        Assertions.assertThat(actual.size()).isEqualTo(1);
         Assertions.assertThat(actual.get(0).getStartTime()).isEqualTo(date.atTime(place.getWorkingHoursList().get(0).getStartTime()));
         Assertions.assertThat(actual.get(0).getEndTime()).isEqualTo(date.plusDays(1).atTime(place.getWorkingHoursList().get(0).getEndTime()));
 
@@ -79,14 +77,14 @@ public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
 
     /**
      * Интеграционный тест на проверку успешного поиска свободного времени на площадке на выбранную дату,
-     * когда на эту дату запланированны несколько мероприятий.
+     * когда на эту дату запланированы несколько мероприятий.
      * <p>
      * В тесте:
-     * 1. Создается создается и добавляется в бд площадка с режимом работы.
-     * 2. Создается и добавляется в бд несколько мероприятий на этой площадки в выбранный день.
-     * 2. Вызывается GET /api/v1/places/{id}/free-time c id созданной площадки.
-     * 3. Проверяется, что в результате запроса получается статус 200 OK и сверяется результат -
-     * свободное время соответствует времени, не занятому созданными мероприятиями.
+     * 1. Создается и добавляется в бд площадка с режимом работы.
+     * 2. Создается и добавляется в бд несколько мероприятий на этой площадке в выбранный день.
+     * 3. Вызывается GET /api/v1/places/{id}/free-time c id созданной площадки.
+     * 4. Проверяется, что в результате запроса получается статус 200 OK и сверяется результат -
+     * свободное время соответствует времени работы площадки, не занятому созданными мероприятиями.
      */
     @WithMockUser
     @Test
@@ -106,19 +104,10 @@ public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
 
         eventRepository.save(event1);
 
-        Event event2 = Event.builder()
-                .name("Футбол")
-                .time(date.atTime(14, 00))
-                .duration(120)
-                .placeId(place.getId())
-                .place(place)
-                .build();
-
-        eventRepository.save(event2);
 
         Event event3 = Event.builder()
                 .name("Футбол")
-                .time(date.atTime(16, 00))
+                .time(date.atTime(16, 0))
                 .duration(90)
                 .placeId(place.getId())
                 .place(place)
@@ -126,9 +115,18 @@ public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
 
         eventRepository.save(event3);
 
-        Event event4 = Event.builder()
+        Event event2 = Event.builder()
                 .name("Футбол")
-                .time(date.plusDays(1).atTime(00, 30))
+                .time(date.atTime(14, 0))
+                .duration(120)
+                .placeId(place.getId())
+                .place(place)
+                .build();
+
+        eventRepository.save(event2);
+Event event4 = Event.builder()
+                .name("Футбол")
+                .time(date.plusDays(1).atTime(0, 30))
                 .duration(90)
                 .placeId(place.getId())
                 .place(place)
@@ -147,6 +145,8 @@ public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
         List<TimePeriodDTO> actual = getResponse(result, new TypeReference<>() {
         });
 
+        Assertions.assertThat(actual.size()).isEqualTo(3);
+
         Assertions.assertThat(actual.get(0).getStartTime()).isEqualTo(date.atTime(place.getWorkingHoursList().get(0).getStartTime()));
         Assertions.assertThat(actual.get(0).getEndTime()).isEqualTo(event1.getTime());
 
@@ -155,6 +155,80 @@ public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
 
         Assertions.assertThat(actual.get(2).getStartTime()).isEqualTo(event3.getTime().plusMinutes(event1.getDuration()));
         Assertions.assertThat(actual.get(2).getEndTime()).isEqualTo(event4.getTime());
+
+    }
+
+    /**
+     * Интеграционный тест на проверку успешного поиска свободного времени на площадке на выбранную дату,
+     * когда на эту дату запланирован одно мероприятие, а у площадки есть несколько интервалов рабочего времени.
+     * <p>
+     * В тесте:
+     * 1. Создается и добавляется в бд площадка с режимом работы.
+     * 2. Добавляется режим работы на другой день, состоящий из двух интервалов.
+     * 3. Создается и добавляется в бд одно мероприятие на этой площадке в выбранный день.
+     * 2. Вызывается GET /api/v1/places/{id}/free-time c id созданной площадки.
+     * 3. Проверяется, что в результате запроса получается статус 200 OK и сверяется результат -
+     * свободное время соответствует времени, не занятому созданными мероприятиями.
+     */
+
+    @WithMockUser
+    @Test
+    public void getFreeTimeSeveralWorkingPeriodsOnDateSuccess() throws Exception {
+
+        LocalDate date = LocalDate.of(2021, 11, 6);
+
+        Place place = createPlace();
+
+        place.getWorkingHoursList().add(WorkingHours.builder()
+                .dayOfWeek(DayOfWeek.SATURDAY)
+                .startTime(LocalTime.of(10, 0))
+                .endTime(LocalTime.of(14, 0))
+                .place(place)
+                .placeId(place.getId())
+                .build());
+
+        place.getWorkingHoursList().add(WorkingHours.builder()
+                .dayOfWeek(DayOfWeek.SATURDAY)
+                .startTime(LocalTime.of(15, 0))
+                .endTime(LocalTime.of(22, 0))
+                .place(place)
+                .placeId(place.getId())
+                .build());
+
+
+        placeRepository.save(place);
+
+        Event event1 = Event.builder()
+                .name("Теннис")
+                .time(date.atTime(10, 30))
+                .duration(90)
+                .placeId(place.getId())
+                .place(place)
+                .build();
+
+        eventRepository.save(event1);
+
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/" + place.getId() + "/free-time?date=" + date))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers
+                        .status()
+                        .isOk())
+                .andReturn();
+
+        List<TimePeriodDTO> actual = getResponse(result, new TypeReference<>() {
+        });
+
+        Assertions.assertThat(actual.size()).isEqualTo(3);
+
+        Assertions.assertThat(actual.get(0).getStartTime()).isEqualTo(date.atTime(place.getWorkingHoursList().get(1).getStartTime()));
+        Assertions.assertThat(actual.get(0).getEndTime()).isEqualTo(event1.getTime());
+
+        Assertions.assertThat(actual.get(1).getStartTime()).isEqualTo(event1.getTime().plusMinutes(event1.getDuration()));
+        Assertions.assertThat(actual.get(1).getEndTime()).isEqualTo(date.atTime(place.getWorkingHoursList().get(1).getEndTime()));
+
+        Assertions.assertThat(actual.get(2).getStartTime()).isEqualTo(date.atTime(place.getWorkingHoursList().get(2).getStartTime()));
+        Assertions.assertThat(actual.get(2).getEndTime()).isEqualTo(date.atTime(place.getWorkingHoursList().get(2).getEndTime()));
 
     }
 
@@ -171,14 +245,13 @@ public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers
                         .status()
-                        .isBadRequest())
+                        .isOk())
                 .andReturn();
 
-        ErrorDTO errorDTO = getResponse(result, ErrorDTO.class);
+        List<TimePeriodDTO> actual = getResponse(result, new TypeReference<>() {
+        });
 
-        Assertions.assertThat(errorDTO.getErrorType()).isEqualTo(PLACE_NOT_WORKING);
-        Assertions.assertThat(errorDTO.getMessage()).isEqualTo(PLACE_NOT_WORKING.getDescription());
-
+        Assertions.assertThat(actual).isEmpty();
 
     }
 
@@ -189,8 +262,8 @@ public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
         workingHoursList
                 .add(WorkingHours.builder()
                         .dayOfWeek(DayOfWeek.FRIDAY)
-                        .startTime(LocalTime.of(10, 00))
-                        .endTime(LocalTime.of(2, 00))
+                        .startTime(LocalTime.of(10, 0))
+                        .endTime(LocalTime.of(2, 0))
                         .build());
 
         Place place = Place.builder()

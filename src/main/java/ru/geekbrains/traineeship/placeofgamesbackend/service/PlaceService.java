@@ -1,5 +1,6 @@
 package ru.geekbrains.traineeship.placeofgamesbackend.service;
 
+import io.jsonwebtoken.lang.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.geekbrains.traineeship.placeofgamesbackend.exception.PlaceNotFoundException;
@@ -16,6 +17,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,95 +35,107 @@ public class PlaceService {
         return placeRepository.findById(id).orElseThrow(PlaceNotFoundException::new);
     }
 
-    public List<TimePeriod> getFreeTime(Long id, LocalDate date) {
+    public List<TimePeriod> getFreeTime(Long placeId, LocalDate date) {
+
+        List<WorkingHours> workingHoursList;
+
+        try {
+            workingHoursList = getPlaceWorkingHoursByDate(placeId, date);
+        } catch (PlaceNotWorkingException e) {
+            return List.of();
+        }
+
+        List<TimePeriod> result = new ArrayList<>();
+        workingHoursList.forEach(workingHours -> result.addAll(getFreeTime(workingHours, date)));
+
+        return result;
+
+    }
+
+    private List<TimePeriod> getFreeTime(WorkingHours workingHours, LocalDate date) {
+
+        LocalDateTime startTime = date.atTime(workingHours.getStartTime());
+        LocalDateTime endTime = date.atTime(workingHours.getEndTime());
+
+        if (workingHours.getStartTime().compareTo(workingHours.getEndTime()) > 0) {
+            endTime = endTime.plusDays(1);
+        }
+
+        List<TimePeriod> eventTimes = getEventsByPlaceAndTimePeriod(workingHours.getPlaceId(), startTime, endTime);
+
+        return buildFreeTimePeriods(startTime, endTime, eventTimes);
+    }
+
+    private List<TimePeriod> buildFreeTimePeriods(LocalDateTime startTime, LocalDateTime endTime, List<TimePeriod> busyPeriods) {
+
+        LocalDateTime previousBusyPeriodEndTime = startTime;
 
         List<TimePeriod> freeTimePeriods = new ArrayList<>();
 
-        WorkingHours workingHours = getWorkingHoursByDate(id, date);
-
-        LocalDateTime startTime;
-        LocalDateTime endTime;
-
-        if (workingHours.getStartTime().compareTo(workingHours.getEndTime()) < 0) {
-            startTime = date.atTime(workingHours.getStartTime());
-            endTime = date.atTime(workingHours.getEndTime());
-        } else {
-            startTime = date.atTime(workingHours.getStartTime());
-            endTime = date.plusDays(1).atTime(workingHours.getEndTime());
+        for (TimePeriod busyTimePeriod : busyPeriods) {
+            addNotEmptyTimePeriod(freeTimePeriods, previousBusyPeriodEndTime, busyTimePeriod.getStartTime());
+            previousBusyPeriodEndTime = busyTimePeriod.getEndTime();
         }
 
-        List<TimePeriod> eventTimes = getEventTimesByDate(id, startTime, endTime);
-
-        LocalDateTime startTimeTemp = startTime;
-        LocalDateTime endTimeTemp = startTime;
-
-        for (int i = 0; i < eventTimes.size(); i++) {
-            if (i == 0 || !eventTimes.get(i - 1).getEndTime().equals(eventTimes.get(i).getStartTime())) {
-                if (startTimeTemp.compareTo(eventTimes.get(i).getStartTime()) < 0) {
-                    endTimeTemp = eventTimes.get(i).getStartTime();
-                }
-
-                freeTimePeriods.add(TimePeriod.builder()
-                        .startTime(startTimeTemp)
-                        .endTime(endTimeTemp)
-                        .build());
-
-
-            }
-            startTimeTemp = eventTimes.get(i).getEndTime();
-        }
-
-        if (startTimeTemp.compareTo(endTime) < 0) {
-            freeTimePeriods.add(TimePeriod.builder()
-                    .startTime(startTimeTemp)
-                    .endTime(endTime)
-                    .build());
-        }
+        addNotEmptyTimePeriod(freeTimePeriods, previousBusyPeriodEndTime, endTime);
 
         return freeTimePeriods;
     }
 
-    private List<TimePeriod> getEventTimesByDate(Long id, LocalDateTime startTime, LocalDateTime endTime) {
+    private void addNotEmptyTimePeriod(List<TimePeriod> timePeriods, LocalDateTime startTime, LocalDateTime endTime) {
 
-        List<Event> events = eventRepository.getEventsByPlaceAndTimePeriod(id, startTime, endTime);
-
-        List<TimePeriod> eventTimes = new ArrayList<>();
-        for (Event event : events) {
-            TimePeriod timePeriod = TimePeriod.builder()
-                    .startTime(event.getTime())
-                    .endTime(event.getTime().plusMinutes(event.getDuration()))
-                    .build();
-            eventTimes.add(timePeriod);
+        if (startTime.compareTo(endTime) < 0) {
+            timePeriods.add(TimePeriod.builder()
+                    .startTime(startTime)
+                    .endTime(endTime)
+                    .build());
         }
-
-        return eventTimes;
     }
 
-    private WorkingHours getWorkingHoursByDate(Long id, LocalDate date) {
-        Place place = placeRepository.getById(id);
+    private List<TimePeriod> getEventsByPlaceAndTimePeriod(Long placeId, LocalDateTime startTime, LocalDateTime endTime) {
+
+        List<Event> events = eventRepository.getEventsByPlaceAndTimePeriod(placeId, startTime, endTime);
+
+        return events.stream().map(event -> TimePeriod.builder()
+                        .startTime(event.getTime())
+                        .endTime(event.getTime().plusMinutes(event.getDuration()))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    private List<WorkingHours> getPlaceWorkingHoursByDate(Long placeId, LocalDate date) {
+
+        Place place = placeRepository.getById(placeId);
         List<WorkingHours> workingHoursList = place.getWorkingHoursList();
 
-        DayOfWeek dayOfWeek = date.getDayOfWeek();
-        WorkingHours workingHours = new WorkingHours();
+        return findByDate(workingHoursList, date).orElse(
+                findByDayOfWeek(workingHoursList, date.getDayOfWeek())
+                        .orElseThrow(PlaceNotWorkingException::new)
+                );
 
-        for (WorkingHours workingHours1 : workingHoursList) {
-            if (workingHours1.getDate() != null && workingHours1.getDate().equals(date)) {
-                workingHours = workingHours1;
-            }
+    }
 
-        }
-        if (workingHours.getStartTime() == null) {
-            for (WorkingHours workingHours1 : workingHoursList) {
-                if (workingHours1.getDayOfWeek() != null && workingHours1.getDayOfWeek().equals(dayOfWeek)) {
-                    workingHours = workingHours1;
-                }
-            }
-        }
+    private Optional<List<WorkingHours>> findByDate(List<WorkingHours> workingHoursList, LocalDate date) {
 
-        if (workingHours.getStartTime() == null) {
-            throw new PlaceNotWorkingException();
-        }
+        List<WorkingHours> result = workingHoursList.stream()
+                .filter(it -> date.equals(it.getDate()))
+                .collect(Collectors.toList());
 
-        return workingHours;
+        return optionalOf(result);
+
+    }
+
+    private Optional<List<WorkingHours>> findByDayOfWeek(List<WorkingHours> workingHoursList, DayOfWeek dayOfWeek) {
+
+        List<WorkingHours> result = workingHoursList.stream()
+                .filter(it -> dayOfWeek == it.getDayOfWeek())
+                .collect(Collectors.toList());
+
+        return optionalOf(result);
+
+    }
+
+    private Optional<List<WorkingHours>> optionalOf(List<WorkingHours> workingHoursList) {
+        return Collections.isEmpty(workingHoursList) ? Optional.empty() : Optional.of(workingHoursList);
     }
 }
