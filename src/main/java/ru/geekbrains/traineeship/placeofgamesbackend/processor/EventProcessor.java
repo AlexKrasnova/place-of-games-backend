@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDetailsDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventToCreateDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.mapper.EventMapper;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.service.EventService;
