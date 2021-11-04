@@ -2,8 +2,8 @@ package ru.geekbrains.traineeship.placeofgamesbackend.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.PlaceDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.PlaceDetailsDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.place.PlaceDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.place.PlaceDetailsDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 
 import java.util.stream.Collectors;

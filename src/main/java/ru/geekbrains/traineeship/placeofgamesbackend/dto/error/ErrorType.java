@@ -1,4 +1,4 @@
-package ru.geekbrains.traineeship.placeofgamesbackend.dto;
+package ru.geekbrains.traineeship.placeofgamesbackend.dto.error;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,8 @@ public enum ErrorType {
     INVALID_REQUEST_PARAMS("Неверные параметры запроса", HttpStatus.BAD_REQUEST),
     CURRENT_USER_NOT_ENROLLED("Текущий пользователь не зарегистрирован на мероприятии", HttpStatus.BAD_REQUEST),
     USER_ALREADY_ENROLLED("Текущий пользоавтель уже зарегистрирован на мероприятии", HttpStatus.BAD_REQUEST),
-    USER_UNAUTHORIZED("Доступ закрыт,", HttpStatus.UNAUTHORIZED);
+    USER_UNAUTHORIZED("Доступ закрыт,", HttpStatus.UNAUTHORIZED),
+    NOT_FREE_TIME_PERIOD("Площадка не работает или время занято", HttpStatus.BAD_REQUEST);
 
     private String description;
 

@@ -10,9 +10,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.geekbrains.traineeship.placeofgamesbackend.AbstractIntegrationTest;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.PlaceDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.error.ErrorDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.place.PlaceDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.User;
@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorType.*;
+import static ru.geekbrains.traineeship.placeofgamesbackend.dto.error.ErrorType.*;
 import static ru.geekbrains.traineeship.placeofgamesbackend.model.Category.BASKETBALL;
 
 

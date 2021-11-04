@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.ErrorType;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.error.ErrorDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.error.ErrorType;
 import ru.geekbrains.traineeship.placeofgamesbackend.exception.*;
 
 @Slf4j
@@ -54,6 +54,9 @@ public class CommonExceptionsHandler {
 
         if (exception instanceof AccessDeniedException)
             return process(exception, ErrorType.USER_UNAUTHORIZED);
+
+        if (exception instanceof NotWorkingOrNotFreeTimePeriodException)
+            return process(exception, ErrorType.NOT_FREE_TIME_PERIOD);
 
         return process(exception, ErrorType.UNEXPECTED_ERROR);
     }

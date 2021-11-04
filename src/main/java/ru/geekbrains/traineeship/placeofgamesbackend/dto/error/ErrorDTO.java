@@ -1,4 +1,4 @@
-package ru.geekbrains.traineeship.placeofgamesbackend.dto;
+package ru.geekbrains.traineeship.placeofgamesbackend.dto.error;
 
 import lombok.Builder;
 import lombok.Getter;

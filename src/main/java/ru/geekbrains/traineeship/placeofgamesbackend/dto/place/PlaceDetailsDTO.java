@@ -1,7 +1,8 @@
-package ru.geekbrains.traineeship.placeofgamesbackend.dto;
+package ru.geekbrains.traineeship.placeofgamesbackend.dto.place;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.WorkingHoursDTO;
 
 import java.util.List;
 

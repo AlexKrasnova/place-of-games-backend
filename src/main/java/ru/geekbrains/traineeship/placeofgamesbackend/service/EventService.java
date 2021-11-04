@@ -3,11 +3,9 @@ package ru.geekbrains.traineeship.placeofgamesbackend.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.geekbrains.traineeship.placeofgamesbackend.exception.CurrentUserNotEnrolledException;
-import ru.geekbrains.traineeship.placeofgamesbackend.exception.EventIsFullException;
-import ru.geekbrains.traineeship.placeofgamesbackend.exception.EventNotFoundException;
-import ru.geekbrains.traineeship.placeofgamesbackend.exception.UserAlreadyEnrolledException;
+import ru.geekbrains.traineeship.placeofgamesbackend.exception.*;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
+import ru.geekbrains.traineeship.placeofgamesbackend.model.TimePeriod;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.User;
 import ru.geekbrains.traineeship.placeofgamesbackend.repository.EventRepository;
 
@@ -19,6 +17,8 @@ import java.util.Set;
 public class EventService {
 
     private final EventRepository eventRepository;
+
+    private final PlaceService placeService;
 
     public List<Event> findAll() {
         return eventRepository.findAllWithPlacesAndUsers();
@@ -56,5 +56,21 @@ public class EventService {
         }
         users.remove(participantToDelete);
         eventRepository.save(event);
+    }
+
+    public Long save(Event event, User user) {
+        event.setOwnerId(user.getId());
+
+        TimePeriod eventTime = TimePeriod.builder()
+                .startTime(event.getTime())
+                .endTime(event.getTime().plusMinutes(event.getDuration()))
+                .build();
+
+        if (!placeService.isTimeFree(event.getPlaceId(), eventTime)) {
+            throw new NotWorkingOrNotFreeTimePeriodException();
+        }
+
+        return eventRepository.save(event).getId();
+
     }
 }

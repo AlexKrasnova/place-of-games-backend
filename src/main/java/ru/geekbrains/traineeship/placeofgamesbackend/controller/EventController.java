@@ -1,12 +1,16 @@
 package ru.geekbrains.traineeship.placeofgamesbackend.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.EventDetailsDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventCreatedDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDetailsDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.processor.EventProcessor;
 
+import java.net.URI;
 import java.security.Principal;
 import java.util.List;
 
@@ -36,6 +40,13 @@ public class EventController {
     @DeleteMapping("/{id}/participants")
     public void deleteParticipant(@PathVariable Long id, Principal principal) {
         eventProcessor.deleteParticipant(id, principal.getName());
+    }
+
+    @SneakyThrows
+    @PostMapping
+    public ResponseEntity<Void> save(@RequestBody EventCreatedDTO event, Principal principal) {
+        Long newId = eventProcessor.save(event, principal.getName());
+        return ResponseEntity.created(new URI("/api/v1/events/" + newId)).body(null);
     }
 
 }
