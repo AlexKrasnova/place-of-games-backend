@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -12,6 +13,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.geekbrains.traineeship.placeofgamesbackend.AbstractIntegrationTest;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.error.ErrorDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventToCreateDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.place.PlaceDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
@@ -31,6 +33,7 @@ import java.util.Set;
 
 import static ru.geekbrains.traineeship.placeofgamesbackend.dto.error.ErrorType.*;
 import static ru.geekbrains.traineeship.placeofgamesbackend.model.Category.BASKETBALL;
+import static ru.geekbrains.traineeship.placeofgamesbackend.model.Category.TENNIS;
 
 
 public class EventControllerIntegrationTest extends AbstractIntegrationTest {
@@ -67,15 +70,12 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void findAllSuccess() throws Exception {
 
-        User user = User.builder()
-                .login(TEST_USER)
-                .name("Вася")
-                .build();
-        userRepository.save(user);
+        User user = createUser(TEST_USER);
 
         Event event = createEvent();
 
         event.getParticipants().add(user);
+        event.setOwnerId(user.getId());
         eventRepository.save(event);
 
         List<EventDTO> eventDTOList = new ArrayList<>();
@@ -181,11 +181,7 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
 
         Event event = createEvent();
 
-        User user = User.builder()
-                .login(TEST_USER)
-                .password("1")
-                .build();
-        userRepository.save(user);
+        User user = createUser(TEST_USER);
 
         event.getParticipants().add(user);
         eventRepository.save(event);
@@ -219,11 +215,7 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
 
         Event event = createEvent();
 
-        User user = User.builder()
-                .login(TEST_USER)
-                .password("1")
-                .build();
-        userRepository.save(user);
+        User user = createUser(TEST_USER);
 
         mvc.perform(MockMvcRequestBuilders
                         .post(BASE_URL + "/" + event.getId().toString() + "/participants"))
@@ -304,8 +296,191 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
 
     }
 
+    /**
+     * Интеграционный тест для проверки успешного добавления мероприятия,
+     * когда на эту дату на данной площадке уже есть мероприятие,
+     * но его время не совпадает с временем нового мероприятия.
+     * <p>
+     * В тесте:
+     * 1. Создается площадка, мероприятие, пользователь.
+     * 2. Создается объект EventToCreateDTO с такой же датой, как у уже созданного мероприятия,
+     * но не пересекающимся с ним временем, который парсится в json.
+     * 3. Вызывается POST /api/v1/events, в теле отправляется созданный json объект.
+     * 4. Проверяется, что в результате запроса получается статус 201 Created.
+     * 5. В бд находится мероприятие с id = 2.
+     * 6. Сверяется, что значения его полей соответсвтуют значеням полей созданного нами мероприятия.
+     */
+    @WithMockUser(value = TEST_USER)
+    @Test
+    public void createSuccess() throws Exception {
+
+        Event anotherEvent = createEvent();
+
+        User user = createUser(TEST_USER);
+
+        EventToCreateDTO eventDTO = EventToCreateDTO.builder()
+                .name("Теннис")
+                .time(anotherEvent.getTime().minusMinutes(120))
+                .duration(120)
+                .placeId(anotherEvent.getPlace().getId())
+                .category(TENNIS)
+                .description("Просто игра")
+                .maxNumberOfParticipants(4)
+                .build();
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventDTO)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers
+                        .status()
+                        .isCreated());
+
+        List<Event> events = eventRepository.findAll();
+        Event event = events.get(1);
+
+        Assertions.assertThat(event.getName()).isEqualTo(eventDTO.getName());
+        Assertions.assertThat(event.getTime()).isEqualTo(eventDTO.getTime());
+        Assertions.assertThat(event.getDuration()).isEqualTo(eventDTO.getDuration());
+        Assertions.assertThat(event.getDescription()).isEqualTo(eventDTO.getDescription());
+        Assertions.assertThat(event.getPlaceId()).isEqualTo(eventDTO.getPlaceId());
+        Assertions.assertThat(event.getCategory()).isEqualTo(eventDTO.getCategory());
+        Assertions.assertThat(event.getMaxNumberOfParticipants()).isEqualTo(eventDTO.getMaxNumberOfParticipants());
+        Assertions.assertThat(event.getOwnerId()).isEqualTo(user.getId());
+
+    }
+
+    /**
+     * Интеграционный тест для проверки отрицательного сценария добавления нового мероприятия,
+     * площадка не работает в выбранное время.
+     * <p>
+     * В тесте:
+     * 1. Создается площадка и пользователь.
+     * 2. Создается объект EventToCreateDTO с датой, в которую площадка не работает.
+     * 3. Вызывается POST /api/v1/events, в теле отправляется созданный json объект.
+     * 4. Проверяется, что в результате запроса получается статус 400 Bad Request.
+     * 5. Сверяется, что в ответе отправляется соответствующая ошибка.
+     */
+    @WithMockUser(value = TEST_USER)
+    @Test
+    public void createNotWorkingTimePeriod() throws Exception {
+
+        Place place = createPlaceWithWorkingHours();
+
+        createUser(TEST_USER);
+
+        EventToCreateDTO eventDTO = EventToCreateDTO.builder()
+                .name("Теннис")
+                .time(LocalDateTime.of(2021, 11, 13, 10, 0))
+                .duration(120)
+                .placeId(place.getId())
+                .category(TENNIS)
+                .description("Просто игра")
+                .maxNumberOfParticipants(4)
+                .build();
+
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventDTO)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers
+                        .status()
+                        .isBadRequest())
+                .andReturn();
+
+        ErrorDTO errorDTO = getResponse(result, ErrorDTO.class);
+
+        Assertions.assertThat(errorDTO.getErrorType()).isEqualTo(NOT_WORKING_OR_NOT_FREE_TIME_PERIOD);
+        Assertions.assertThat(errorDTO.getMessage()).isEqualTo(NOT_WORKING_OR_NOT_FREE_TIME_PERIOD.getDescription());
+
+    }
+
+    /**
+     * Интеграционный тест для проверки отрицательного сценария добавления нового мероприятия,
+     * время мероприятия пересекается с уже существующим мероприятием.
+     * <p>
+     * В тесте:
+     * 1. Создается площадка, мероприятие и пользователь.
+     * 2. Создается объект EventToCreateDTO время которого пересекается с временем уже существующего мероприятия.
+     * 3. Вызывается POST /api/v1/events, в теле отправляется созданный json объект.
+     * 4. Проверяется, что в результате запроса получается статус 400 Bad Request.
+     * 5. Сверяется, что в ответе отправляется соответствующая ошибка.
+     */
+    @WithMockUser(value = TEST_USER)
+    @Test
+    public void createNotFreeTimePeriod() throws Exception {
+
+        Event event = createEvent();
+
+        createUser(TEST_USER);
+
+        EventToCreateDTO eventDTO = EventToCreateDTO.builder()
+                .name("Теннис")
+                .time(event.getTime().minusMinutes(60))
+                .duration(120)
+                .placeId(event.getPlace().getId())
+                .category(TENNIS)
+                .description("Просто игра")
+                .maxNumberOfParticipants(4)
+                .build();
+
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventDTO)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers
+                        .status()
+                        .isBadRequest())
+                .andReturn();
+
+        ErrorDTO errorDTO = getResponse(result, ErrorDTO.class);
+
+        Assertions.assertThat(errorDTO.getErrorType()).isEqualTo(NOT_WORKING_OR_NOT_FREE_TIME_PERIOD);
+        Assertions.assertThat(errorDTO.getMessage()).isEqualTo(NOT_WORKING_OR_NOT_FREE_TIME_PERIOD.getDescription());
+
+    }
+
+    private User createUser(String login) {
+
+        User user = User.builder()
+                .login(login)
+                .name("name")
+                .password("1")
+                .build();
+
+        return userRepository.save(user);
+    }
+
     private Event createEvent() {
 
+        User user = createUser(TEST_USER + 1);
+
+        Place place = createPlaceWithWorkingHours();
+
+        Set<User> participants = new HashSet<>();
+
+        Event event = Event.builder()
+                .name("Баскетбол для любителей")
+                .time(LocalDateTime.of(2021, 11, 12, 12, 0))
+                .duration(120)
+                .placeId(place.getId())
+                .place(place)
+                .maxNumberOfParticipants(12)
+                .description("Какое-то мероприятие")
+                .category(BASKETBALL)
+                .participants(participants)
+                .ownerId(user.getId())
+                .build();
+        event = eventRepository.save(event);
+
+        return event;
+
+    }
+
+    private Place createPlaceWithWorkingHours() {
         List<WorkingHours> workingHoursList = new ArrayList<>();
         workingHoursList
                 .add(WorkingHours.builder()
@@ -323,25 +498,7 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
         for (WorkingHours workingHours : workingHoursList)
             workingHours.setPlace(place);
 
-        place = placeRepository.save(place);
-
-        Set<User> participants = new HashSet<>();
-
-        Event event = Event.builder()
-                .name("Баскетбол для любителей")
-                .time(LocalDateTime.of(2021, 12, 21, 12, 00))
-                .duration(120)
-                .placeId(place.getId())
-                .place(place)
-                .maxNumberOfParticipants(12)
-                .description("Какое-то мероприятие")
-                .category(BASKETBALL)
-                .participants(participants)
-                .build();
-        event = eventRepository.save(event);
-
-        return event;
-
+        return placeRepository.save(place);
     }
 
 }

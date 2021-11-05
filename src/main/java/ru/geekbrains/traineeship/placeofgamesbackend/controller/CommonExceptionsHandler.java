@@ -56,7 +56,7 @@ public class CommonExceptionsHandler {
             return process(exception, ErrorType.USER_UNAUTHORIZED);
 
         if (exception instanceof NotWorkingOrNotFreeTimePeriodException)
-            return process(exception, ErrorType.NOT_FREE_TIME_PERIOD);
+            return process(exception, ErrorType.NOT_WORKING_OR_NOT_FREE_TIME_PERIOD);
 
         return process(exception, ErrorType.UNEXPECTED_ERROR);
     }

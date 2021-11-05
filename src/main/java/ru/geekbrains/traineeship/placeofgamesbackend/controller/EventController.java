@@ -5,9 +5,9 @@ import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventCreatedDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDetailsDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventToCreateDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.processor.EventProcessor;
 
 import java.net.URI;
@@ -44,7 +44,7 @@ public class EventController {
 
     @SneakyThrows
     @PostMapping
-    public ResponseEntity<Void> save(@RequestBody EventCreatedDTO event, Principal principal) {
+    public ResponseEntity<Void> create(@RequestBody EventToCreateDTO event, Principal principal) {
         Long newId = eventProcessor.save(event, principal.getName());
         return ResponseEntity.created(new URI("/api/v1/events/" + newId)).body(null);
     }

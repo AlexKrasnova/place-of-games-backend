@@ -14,9 +14,11 @@ import ru.geekbrains.traineeship.placeofgamesbackend.AbstractIntegrationTest;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.TimePeriodDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
+import ru.geekbrains.traineeship.placeofgamesbackend.model.User;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.WorkingHours;
 import ru.geekbrains.traineeship.placeofgamesbackend.repository.EventRepository;
 import ru.geekbrains.traineeship.placeofgamesbackend.repository.PlaceRepository;
+import ru.geekbrains.traineeship.placeofgamesbackend.repository.UserRepository;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -28,16 +30,22 @@ public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
 
     private static final String BASE_URL = "/api/v1/places";
 
+    private static final String TEST_USER = "testUser";
+
     @Autowired
     private PlaceRepository placeRepository;
 
     @Autowired
     private EventRepository eventRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @AfterEach
     public void tearDown() {
         eventRepository.deleteAll();
         placeRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     /**
@@ -86,7 +94,7 @@ public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
      * 4. Проверяется, что в результате запроса получается статус 200 OK и сверяется результат -
      * свободное время соответствует времени работы площадки, не занятому созданными мероприятиями.
      */
-    @WithMockUser
+    @WithMockUser(value = TEST_USER)
     @Test
     public void getFreeTimeSeveralEventsOnDateSuccess() throws Exception {
 
@@ -94,12 +102,19 @@ public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
 
         Place place = createPlace();
 
+        User user = User.builder()
+                .login(TEST_USER)
+                .name("Вася")
+                .build();
+        userRepository.save(user);
+
         Event event1 = Event.builder()
                 .name("Теннис")
                 .time(date.atTime(10, 30))
                 .duration(90)
                 .placeId(place.getId())
                 .place(place)
+                .ownerId(user.getId())
                 .build();
 
         eventRepository.save(event1);
@@ -111,6 +126,7 @@ public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
                 .duration(90)
                 .placeId(place.getId())
                 .place(place)
+                .ownerId(user.getId())
                 .build();
 
         eventRepository.save(event3);
@@ -121,15 +137,17 @@ public class PlaceControllerIntegrationTest extends AbstractIntegrationTest {
                 .duration(120)
                 .placeId(place.getId())
                 .place(place)
+                .ownerId(user.getId())
                 .build();
 
         eventRepository.save(event2);
-Event event4 = Event.builder()
+        Event event4 = Event.builder()
                 .name("Футбол")
                 .time(date.plusDays(1).atTime(0, 30))
                 .duration(90)
                 .placeId(place.getId())
                 .place(place)
+                .ownerId(user.getId())
                 .build();
 
         eventRepository.save(event4);
@@ -171,9 +189,15 @@ Event event4 = Event.builder()
      * свободное время соответствует времени, не занятому созданными мероприятиями.
      */
 
-    @WithMockUser
+    @WithMockUser(value = TEST_USER)
     @Test
     public void getFreeTimeSeveralWorkingPeriodsOnDateSuccess() throws Exception {
+
+        User user = User.builder()
+                .login(TEST_USER)
+                .name("Вася")
+                .build();
+        userRepository.save(user);
 
         LocalDate date = LocalDate.of(2021, 11, 6);
 
@@ -204,6 +228,7 @@ Event event4 = Event.builder()
                 .duration(90)
                 .placeId(place.getId())
                 .place(place)
+                .ownerId(user.getId())
                 .build();
 
         eventRepository.save(event1);
@@ -232,6 +257,15 @@ Event event4 = Event.builder()
 
     }
 
+    /**
+     * Интеграционный тест на проверку поиска свободного времени на площадке,
+     * когда площадка не работает в указанный день.
+     * <p>
+     * В тесте:
+     * 1. Создается и добавляется в бд площадка с режимом работы.
+     * 2. Вызывается GET /api/v1/places/{id}/free-time c id созданной площадки и датой, когда площадка не работает.
+     * 3. Проверяется, что в результате запроса получается статус 200 OK и в ответе приходит пустой список.
+     */
     @WithMockUser
     @Test
     public void getFreeTimePlaceNotWorking() throws Exception {

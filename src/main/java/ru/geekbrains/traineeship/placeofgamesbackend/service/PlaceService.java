@@ -38,6 +38,9 @@ public class PlaceService {
     public boolean isTimeFree(Long placeId, TimePeriod timePeriod) {
 
         List<TimePeriod> freeTimes = getFreeTime(placeId, timePeriod.getStartTime().toLocalDate());
+        // К списку свободного времени добавляется свободное время за предыдущий день,
+        // чтобы учесть то, что площадка может работать после полуночи, и свободное время на нужную дату может оказаться
+        // в списке свободного времени за предыдущий день.
         freeTimes.addAll(getFreeTime(placeId, timePeriod.getStartTime().toLocalDate().minusDays(1)));
 
         return freeTimes.stream()
@@ -53,7 +56,7 @@ public class PlaceService {
         try {
             workingHoursList = getPlaceWorkingHoursByDate(placeId, date);
         } catch (PlaceNotWorkingException e) {
-            return List.of();
+            return new ArrayList<>();
         }
 
         List<TimePeriod> result = new ArrayList<>();
