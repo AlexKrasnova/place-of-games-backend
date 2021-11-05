@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -12,6 +13,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.geekbrains.traineeship.placeofgamesbackend.AbstractIntegrationTest;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.error.ErrorDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventToCreateDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.place.PlaceDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
@@ -31,6 +33,7 @@ import java.util.Set;
 
 import static ru.geekbrains.traineeship.placeofgamesbackend.dto.error.ErrorType.*;
 import static ru.geekbrains.traineeship.placeofgamesbackend.model.Category.BASKETBALL;
+import static ru.geekbrains.traineeship.placeofgamesbackend.model.Category.TENNIS;
 
 
 public class EventControllerIntegrationTest extends AbstractIntegrationTest {
