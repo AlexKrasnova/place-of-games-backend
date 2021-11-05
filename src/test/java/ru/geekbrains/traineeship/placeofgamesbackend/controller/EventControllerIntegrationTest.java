@@ -452,6 +452,7 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
                 .build();
 
         return userRepository.save(user);
+
     }
 
     private Event createEvent() {
@@ -485,8 +486,8 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
         workingHoursList
                 .add(WorkingHours.builder()
                         .dayOfWeek(DayOfWeek.FRIDAY)
-                        .startTime(LocalTime.of(10, 00))
-                        .endTime(LocalTime.of(16, 00))
+                        .startTime(LocalTime.of(10, 0))
+                        .endTime(LocalTime.of(16, 0))
                         .build());
 
         Place place = Place.builder()
