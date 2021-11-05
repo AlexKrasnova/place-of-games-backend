@@ -2,8 +2,8 @@ package ru.geekbrains.traineeship.placeofgamesbackend.dto.event;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.UserDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.place.PlaceDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.user.UserDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Category;
 
 import java.time.LocalDateTime;

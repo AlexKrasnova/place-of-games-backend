@@ -17,4 +17,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Query("select e from Event e where e.placeId =:placeId and e.time between :time1 and :time2 order by e.time asc")
     List<Event> getEventsByPlaceAndTimePeriod(@Param("placeId") Long placeId, @Param("time1") LocalDateTime time1, @Param("time2") LocalDateTime time2);
 
+    @Query("select e from Event e where e.ownerId =:ownerId order by e.time asc")
+    List<Event> findByOwner(@Param("ownerId") Long ownerId);
+
+    @Query("select e from Event e left join e.participants p where p.id =:participantId")
+    List<Event> findByParticipantId(@Param("participantId") Long participantId);
+
 }
