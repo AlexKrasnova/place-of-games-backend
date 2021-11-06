@@ -46,6 +46,13 @@ public class Event {
     @Column(name = "category")
     private Category category;
 
+    @Column(name = "owner_id")
+    private Long ownerId;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id", insertable = false, updatable = false)
+    private User owner;
+
     @ManyToMany
     @JoinTable(name = "event_participant",
             joinColumns = @JoinColumn(name = "event_id"),

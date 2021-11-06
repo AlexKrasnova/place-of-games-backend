@@ -35,6 +35,20 @@ public class PlaceService {
         return placeRepository.findById(id).orElseThrow(PlaceNotFoundException::new);
     }
 
+    public boolean isTimeFree(Long placeId, TimePeriod timePeriod) {
+
+        List<TimePeriod> freeTimes = getFreeTime(placeId, timePeriod.getStartTime().toLocalDate());
+        // К списку свободного времени добавляется свободное время за предыдущий день,
+        // чтобы учесть то, что площадка может работать после полуночи, и свободное время на нужную дату может оказаться
+        // в списке свободного времени за предыдущий день.
+        freeTimes.addAll(getFreeTime(placeId, timePeriod.getStartTime().toLocalDate().minusDays(1)));
+
+        return freeTimes.stream()
+                .anyMatch(it -> (
+                        it.getStartTime().compareTo(timePeriod.getStartTime()) <= 0 && it.getEndTime().compareTo(timePeriod.getEndTime()) >= 0
+                ));
+    }
+
     public List<TimePeriod> getFreeTime(Long placeId, LocalDate date) {
 
         List<WorkingHours> workingHoursList;
@@ -42,10 +56,12 @@ public class PlaceService {
         try {
             workingHoursList = getPlaceWorkingHoursByDate(placeId, date);
         } catch (PlaceNotWorkingException e) {
-            return List.of();
+            return new ArrayList<>();
         }
 
         List<TimePeriod> result = new ArrayList<>();
+        //todo: Расобраться с тем, что сейчас количество запросов в бд соответствует количеству отрезков рабочего времени.
+        // Подумать о том, как можно сократить.
         workingHoursList.forEach(workingHours -> result.addAll(getFreeTime(workingHours, date)));
 
         return result;
@@ -111,7 +127,7 @@ public class PlaceService {
         return findByDate(workingHoursList, date).orElse(
                 findByDayOfWeek(workingHoursList, date.getDayOfWeek())
                         .orElseThrow(PlaceNotWorkingException::new)
-                );
+        );
 
     }
 
@@ -138,4 +154,5 @@ public class PlaceService {
     private Optional<List<WorkingHours>> optionalOf(List<WorkingHours> workingHoursList) {
         return Collections.isEmpty(workingHoursList) ? Optional.empty() : Optional.of(workingHoursList);
     }
+
 }
