@@ -34,4 +34,7 @@ public class Place {
     @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
     private List<Event> events;
 
+    @Version
+    private Long version;
+
 }

@@ -3,7 +3,8 @@ create table place
     id          bigserial primary key,
     name        text,
     address     text not null,
-    description text
+    description text,
+    version                    bigserial
 );
 
 create table event

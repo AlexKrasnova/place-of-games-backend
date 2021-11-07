@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.geekbrains.traineeship.placeofgamesbackend.exception.*;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
+import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.TimePeriod;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.User;
 import ru.geekbrains.traineeship.placeofgamesbackend.repository.EventRepository;
+import ru.geekbrains.traineeship.placeofgamesbackend.repository.PlaceRepository;
 
 import java.util.List;
 import java.util.Set;
@@ -17,6 +19,8 @@ import java.util.Set;
 public class EventService {
 
     private final EventRepository eventRepository;
+
+    private final PlaceRepository placeRepository;
 
     private final PlaceService placeService;
 
@@ -58,8 +62,12 @@ public class EventService {
         eventRepository.save(event);
     }
 
-    public Long save(Event event, User user) {
+    @Transactional
+    public Long create(Event event, User user) {
         event.setOwnerId(user.getId());
+        Place place = placeService.findById(event.getPlaceId());
+        place.getEvents().add(event);
+        placeRepository.save(place);
 
         TimePeriod eventTime = TimePeriod.builder()
                 .startTime(event.getTime())

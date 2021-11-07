@@ -45,7 +45,7 @@ public class EventController {
     @SneakyThrows
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody EventToCreateDTO event, Principal principal) {
-        Long newId = eventProcessor.save(event, principal.getName());
+        Long newId = eventProcessor.create(event, principal.getName());
         return ResponseEntity.created(new URI("/api/v1/events/" + newId)).body(null);
     }
 
