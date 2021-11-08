@@ -7,10 +7,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.UserDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDetailsDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.place.PlaceDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.user.UserDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.User;
@@ -56,8 +56,8 @@ public class EventMapperUnitTest {
         workingHoursList
                 .add(WorkingHours.builder()
                         .dayOfWeek(DayOfWeek.FRIDAY)
-                        .startTime(LocalTime.of(10, 00))
-                        .endTime(LocalTime.of(16, 00))
+                        .startTime(LocalTime.of(10, 0))
+                        .endTime(LocalTime.of(16, 0))
                         .build());
 
         Place place = Place.builder()
@@ -76,7 +76,7 @@ public class EventMapperUnitTest {
 
         Event event = Event.builder()
                 .name("Баскетбол для любителей")
-                .time(LocalDateTime.of(2021, 12, 21, 12, 00))
+                .time(LocalDateTime.of(2021, 12, 21, 12, 0))
                 .duration(120)
                 .placeId(place.getId())
                 .place(place)
@@ -121,8 +121,8 @@ public class EventMapperUnitTest {
         workingHoursList
                 .add(WorkingHours.builder()
                         .dayOfWeek(DayOfWeek.FRIDAY)
-                        .startTime(LocalTime.of(10, 00))
-                        .endTime(LocalTime.of(16, 00))
+                        .startTime(LocalTime.of(10, 0))
+                        .endTime(LocalTime.of(16, 0))
                         .build());
 
         Place place = Place.builder()
@@ -141,7 +141,7 @@ public class EventMapperUnitTest {
 
         Event event = Event.builder()
                 .name("Баскетбол для любителей")
-                .time(LocalDateTime.of(2021, 12, 21, 12, 00))
+                .time(LocalDateTime.of(2021, 12, 21, 12, 0))
                 .duration(120)
                 .placeId(place.getId())
                 .place(place)

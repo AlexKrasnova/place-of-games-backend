@@ -83,4 +83,16 @@ public class EventService {
         return eventRepository.save(event).getId();
 
     }
+
+    public List<Event> findByOwner(User user) {
+
+        return eventRepository.findByOwner(user.getId());
+
+    }
+
+    public List<Event> findByParticipant(User user) {
+
+        return eventRepository.findByParticipantId(user.getId());
+
+    }
 }

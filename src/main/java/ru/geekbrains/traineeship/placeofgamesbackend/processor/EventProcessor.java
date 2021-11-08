@@ -47,4 +47,24 @@ public class EventProcessor {
     public Long create(EventToCreateDTO event, String currentUserLogin) {
         return eventService.create(eventMapper.mapToEvent(event), userService.findByLogin(currentUserLogin));
     }
+
+    public List<EventDTO> findByOwner(String currentUserLogin) {
+
+        return eventService
+                .findByOwner(userService.findByLogin(currentUserLogin))
+                .stream()
+                .map(event -> eventMapper.mapToEventDTO(event, currentUserLogin))
+                .collect(Collectors.toList());
+
+    }
+
+    public List<EventDTO> findByParticipant(String currentUserLogin) {
+
+        return eventService
+                .findByParticipant(userService.findByLogin(currentUserLogin))
+                .stream()
+                .map(event -> eventMapper.mapToEventDTO(event, currentUserLogin))
+                .collect(Collectors.toList());
+
+    }
 }

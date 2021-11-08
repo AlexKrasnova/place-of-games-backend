@@ -328,17 +328,18 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
                 .maxNumberOfParticipants(4)
                 .build();
 
-        mvc.perform(MockMvcRequestBuilders
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(eventDTO)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers
                         .status()
-                        .isCreated());
+                        .isCreated())
+                .andReturn();
 
-        List<Event> events = eventRepository.findAll();
-        Event event = events.get(1);
+        Long id = getResponse(result, Long.class);
+        Event event = eventRepository.findById(id).orElseThrow();
 
         Assertions.assertThat(event.getName()).isEqualTo(eventDTO.getName());
         Assertions.assertThat(event.getTime()).isEqualTo(eventDTO.getTime());
@@ -452,6 +453,7 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
                 .build();
 
         return userRepository.save(user);
+
     }
 
     private Event createEvent() {
@@ -485,8 +487,8 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
         workingHoursList
                 .add(WorkingHours.builder()
                         .dayOfWeek(DayOfWeek.FRIDAY)
-                        .startTime(LocalTime.of(10, 00))
-                        .endTime(LocalTime.of(16, 00))
+                        .startTime(LocalTime.of(10, 0))
+                        .endTime(LocalTime.of(16, 0))
                         .build());
 
         Place place = Place.builder()
