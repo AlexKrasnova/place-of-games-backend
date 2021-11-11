@@ -44,7 +44,11 @@ public class EventProcessor {
         eventService.deleteParticipant(eventId, userService.findByLogin(currentUserLogin));
     }
 
-    public Long create(EventToSaveDTO event, String currentUserLogin) {
+    public void deleteEvent (Long eventId, String currentUserLogin) {
+        eventService.deleteEvent(eventId, userService.findByLogin(currentUserLogin));
+    }
+
+    public Long create(EventToCreateDTO event, String currentUserLogin) {
         return eventService.create(eventMapper.mapToEvent(event), userService.findByLogin(currentUserLogin));
     }
 

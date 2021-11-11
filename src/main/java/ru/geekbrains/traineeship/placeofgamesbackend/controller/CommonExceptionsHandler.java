@@ -58,6 +58,9 @@ public class CommonExceptionsHandler {
         if (exception instanceof NotWorkingOrNotFreeTimePeriodException)
             return process(exception, ErrorType.NOT_WORKING_OR_NOT_FREE_TIME_PERIOD);
 
+        if (exception instanceof CurrentUserNotEventOwnerException)
+            return process(exception, ErrorType.USER_NOT_EVENT_OWNER);
+
         return process(exception, ErrorType.UNEXPECTED_ERROR);
     }
 
