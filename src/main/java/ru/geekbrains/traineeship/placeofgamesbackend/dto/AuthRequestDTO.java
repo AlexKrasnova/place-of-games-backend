@@ -11,4 +11,5 @@ public class AuthRequestDTO {
 
     @NotNull
     private String password;
+
 }

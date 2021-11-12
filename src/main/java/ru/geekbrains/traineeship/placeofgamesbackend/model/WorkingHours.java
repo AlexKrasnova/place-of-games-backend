@@ -40,5 +40,4 @@ public class WorkingHours {
 
     @Column(name = "end_time")
     private LocalTime endTime;
-
 }

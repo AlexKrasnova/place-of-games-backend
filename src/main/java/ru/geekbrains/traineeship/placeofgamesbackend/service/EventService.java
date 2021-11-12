@@ -64,35 +64,28 @@ public class EventService {
 
     @Transactional
     public Long create(Event event, User user) {
-
         event.setOwnerId(user.getId());
 
+        Place place = placeService.findById(event.getPlaceId());
         TimePeriod eventTime = TimePeriod.builder()
                 .startTime(event.getTime())
                 .endTime(event.getTime().plusMinutes(event.getDuration()))
                 .build();
-
         if (!placeService.isTimeFree(event.getPlaceId(), eventTime)) {
             throw new NotWorkingOrNotFreeTimePeriodException();
         }
 
-        Place place = placeService.findById(event.getPlaceId());
         place.getEvents().add(event);
         placeRepository.save(place);
 
         return eventRepository.save(event).getId();
-
     }
 
     public List<Event> findByOwner(User user) {
-
         return eventRepository.findByOwner(user.getId());
-
     }
 
     public List<Event> findByParticipant(User user) {
-
         return eventRepository.findByParticipantId(user.getId());
-
     }
 }

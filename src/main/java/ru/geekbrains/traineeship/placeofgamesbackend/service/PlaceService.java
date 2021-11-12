@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 public class PlaceService {
 
     private final PlaceRepository placeRepository;
+
     private final EventRepository eventRepository;
 
     public List<Place> findAll() {
@@ -36,7 +37,6 @@ public class PlaceService {
     }
 
     public boolean isTimeFree(Long placeId, TimePeriod timePeriod) {
-
         List<TimePeriod> freeTimes = getFreeTime(placeId, timePeriod.getStartTime().toLocalDate());
         // К списку свободного времени добавляется свободное время за предыдущий день,
         // чтобы учесть то, что площадка может работать после полуночи, и свободное время на нужную дату может оказаться
@@ -50,9 +50,7 @@ public class PlaceService {
     }
 
     public List<TimePeriod> getFreeTime(Long placeId, LocalDate date) {
-
         List<WorkingHours> workingHoursList;
-
         try {
             workingHoursList = getPlaceWorkingHoursByDate(placeId, date);
         } catch (PlaceNotWorkingException e) {
@@ -69,37 +67,27 @@ public class PlaceService {
     }
 
     private List<TimePeriod> getFreeTime(WorkingHours workingHours, LocalDate date) {
-
         LocalDateTime startTime = date.atTime(workingHours.getStartTime());
         LocalDateTime endTime = date.atTime(workingHours.getEndTime());
-
         if (workingHours.getStartTime().compareTo(workingHours.getEndTime()) > 0) {
             endTime = endTime.plusDays(1);
         }
-
         List<TimePeriod> eventTimes = getEventsByPlaceAndTimePeriod(workingHours.getPlaceId(), startTime, endTime);
-
         return buildFreeTimePeriods(startTime, endTime, eventTimes);
     }
 
     private List<TimePeriod> buildFreeTimePeriods(LocalDateTime startTime, LocalDateTime endTime, List<TimePeriod> busyPeriods) {
-
         LocalDateTime previousBusyPeriodEndTime = startTime;
-
         List<TimePeriod> freeTimePeriods = new ArrayList<>();
-
         for (TimePeriod busyTimePeriod : busyPeriods) {
             addNotEmptyTimePeriod(freeTimePeriods, previousBusyPeriodEndTime, busyTimePeriod.getStartTime());
             previousBusyPeriodEndTime = busyTimePeriod.getEndTime();
         }
-
         addNotEmptyTimePeriod(freeTimePeriods, previousBusyPeriodEndTime, endTime);
-
         return freeTimePeriods;
     }
 
     private void addNotEmptyTimePeriod(List<TimePeriod> timePeriods, LocalDateTime startTime, LocalDateTime endTime) {
-
         if (startTime.compareTo(endTime) < 0) {
             timePeriods.add(TimePeriod.builder()
                     .startTime(startTime)
@@ -109,9 +97,7 @@ public class PlaceService {
     }
 
     private List<TimePeriod> getEventsByPlaceAndTimePeriod(Long placeId, LocalDateTime startTime, LocalDateTime endTime) {
-
         List<Event> events = eventRepository.getEventsByPlaceAndTimePeriod(placeId, startTime, endTime);
-
         return events.stream().map(event -> TimePeriod.builder()
                         .startTime(event.getTime())
                         .endTime(event.getTime().plusMinutes(event.getDuration()))
@@ -120,33 +106,25 @@ public class PlaceService {
     }
 
     private List<WorkingHours> getPlaceWorkingHoursByDate(Long placeId, LocalDate date) {
-
         Place place = placeRepository.getById(placeId);
         List<WorkingHours> workingHoursList = place.getWorkingHoursList();
-
         return findByDate(workingHoursList, date).orElse(
                 findByDayOfWeek(workingHoursList, date.getDayOfWeek())
                         .orElseThrow(PlaceNotWorkingException::new)
         );
-
     }
 
     private Optional<List<WorkingHours>> findByDate(List<WorkingHours> workingHoursList, LocalDate date) {
-
         List<WorkingHours> result = workingHoursList.stream()
                 .filter(it -> date.equals(it.getDate()))
                 .collect(Collectors.toList());
-
         return optionalOf(result);
-
     }
 
     private Optional<List<WorkingHours>> findByDayOfWeek(List<WorkingHours> workingHoursList, DayOfWeek dayOfWeek) {
-
         List<WorkingHours> result = workingHoursList.stream()
                 .filter(it -> dayOfWeek == it.getDayOfWeek())
                 .collect(Collectors.toList());
-
         return optionalOf(result);
 
     }

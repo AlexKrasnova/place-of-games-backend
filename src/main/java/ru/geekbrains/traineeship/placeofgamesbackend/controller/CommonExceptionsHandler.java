@@ -62,7 +62,6 @@ public class CommonExceptionsHandler {
     }
 
     private ResponseEntity<ErrorDTO> process(Exception exception, ErrorType errorType) {
-
         ErrorDTO errorDTO = ErrorDTO.builder()
                 .technicalDescription(exception.getMessage())
                 .message(errorType.getDescription())

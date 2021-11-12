@@ -18,12 +18,12 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class UserController {
 
+    private final UserService userService;
+
     @SneakyThrows
     @PostMapping
     public ResponseEntity<Void> registerUser(@RequestBody @Valid RegistrationRequestDTO request) {
         userService.createUser(request.getLogin(), request.getPassword(), request.getName());
         return ResponseEntity.created(new URI("/api/v1/users/" + request.getLogin())).body(null);
     }
-
-    private final UserService userService;
 }
