@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDetailsDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventToCreateDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventToSaveDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.mapper.EventMapper;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.service.EventService;
@@ -44,7 +44,7 @@ public class EventProcessor {
         eventService.deleteParticipant(eventId, userService.findByLogin(currentUserLogin));
     }
 
-    public Long create(EventToCreateDTO event, String currentUserLogin) {
+    public Long create(EventToSaveDTO event, String currentUserLogin) {
         return eventService.create(eventMapper.mapToEvent(event), userService.findByLogin(currentUserLogin));
     }
 

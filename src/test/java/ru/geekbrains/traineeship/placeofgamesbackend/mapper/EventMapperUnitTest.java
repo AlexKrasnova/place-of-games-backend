@@ -149,6 +149,8 @@ public class EventMapperUnitTest {
                 .description("Какое-то мероприятие")
                 .category(BASKETBALL)
                 .participants(participants)
+                .ownerId(user.getId())
+                .owner(user)
                 .build();
 
         Mockito.doReturn(PlaceDTO.builder()
@@ -174,6 +176,7 @@ public class EventMapperUnitTest {
         Assertions.assertThat(result.getCategory()).isEqualTo(event.getCategory());
         Assertions.assertThat(result.getDescription()).isEqualTo(event.getDescription());
         Assertions.assertThat(result.getIsCurrentUserEnrolled()).isEqualTo(false);
+        Assertions.assertThat(result.getIsCurrentUserOwner()).isEqualTo(false);
         Assertions.assertThat(result.getParticipants()).isEqualTo(event.getParticipants().stream().map(userMapper::mapToUserDTO).collect(Collectors.toSet()));
 
     }

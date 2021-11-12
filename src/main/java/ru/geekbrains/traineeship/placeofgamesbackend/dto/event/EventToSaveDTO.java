@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class EventToCreateDTO {
+public class EventToSaveDTO {
 
     private String name;
 

@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.geekbrains.traineeship.placeofgamesbackend.AbstractIntegrationTest;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.error.ErrorDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventToCreateDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventToSaveDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.place.PlaceDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Place;
@@ -318,7 +318,7 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
 
         User user = createUser(TEST_USER);
 
-        EventToCreateDTO eventDTO = EventToCreateDTO.builder()
+        EventToSaveDTO eventDTO = EventToSaveDTO.builder()
                 .name("Теннис")
                 .time(anotherEvent.getTime().minusMinutes(120))
                 .duration(120)
@@ -371,7 +371,7 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
 
         createUser(TEST_USER);
 
-        EventToCreateDTO eventDTO = EventToCreateDTO.builder()
+        EventToSaveDTO eventDTO = EventToSaveDTO.builder()
                 .name("Теннис")
                 .time(LocalDateTime.of(2021, 11, 13, 10, 0))
                 .duration(120)
@@ -417,7 +417,7 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
 
         createUser(TEST_USER);
 
-        EventToCreateDTO eventDTO = EventToCreateDTO.builder()
+        EventToSaveDTO eventDTO = EventToSaveDTO.builder()
                 .name("Теннис")
                 .time(event.getTime().minusMinutes(60))
                 .duration(120)
