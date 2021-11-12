@@ -449,8 +449,8 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
      * <p>
      * В тесте:
      * 1. Создается мероприятие.
-     * 2. Создается пользователь.
-     * 3. Вызывается DELETE /api/v1/events/{id} со значением мероприятия.
+     * 2. Создается пользователь, который прописывается как owner мероприятия.
+     * 3. Вызывается DELETE /api/v1/events/{id} со значением id созданного нами мероприятия.
      * 4. Проверяется, что в результате запроса получается статус 200 OK.
      */
     @WithMockUser(value = TEST_USER)
@@ -468,16 +468,16 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
                 .andExpect(MockMvcResultMatchers
                         .status()
                         .isOk());
-
     }
 
     /**
-     * Интеграционный тест для проверки, что текущий пользователь не является организатором мероприятия
+     * Интеграционный тест для проверки неудачного удаления мероприятия,
+     * когда текущий пользователь не является организатором мероприятия
      * <p>
      * В тесте:
      * 1. Создается мероприятие.
-     * 2. Создается пользователь и добавляется в список участников на мероприятии.
-     * 3. Вызывается DELETE /api/v1/events/{id} со значением мероприятия.
+     * 2. Создается пользователь.
+     * 3. Вызывается DELETE /api/v1/events/{id} со значением id созданного нами мероприятия.
      * 4. Проверяется, что в результате запроса получается статус 400 Bad Request.
      * 5. Сверяется, что в ответе отправляется соответствующая ошибка.
      */
@@ -486,7 +486,7 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
     public void deleteEventUserNotEventOwner() throws Exception {
 
         Event event = createEvent();
-        User user = createUser(TEST_USER);
+        createUser(TEST_USER);
 
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .delete(BASE_URL + "/" + event.getId()))
@@ -504,19 +504,20 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     /**
-     * Интеграционный тест для проверки отсутствия мероприятия
+     * Интеграционный тест для проверки неудачного удаления мероприятия,
+     * когда мероприятие отсутствует.
      * <p>
      * В тесте:
-     * 1. Создается пользователь и добавляется в список участников на мероприятии.
+     * 1. Создается пользователь.
      * 2. Вызывается DELETE /api/v1/events/{id} со значением id = 1.
-     * 3. Проверяется, что в результате запроса получается статус 400 Bad Request.
+     * 3. Проверяется, что в результате запроса получается статус 404 Not Found.
      * 4. Сверяется, что в ответе отправляется соответствующая ошибка.
      */
     @WithMockUser(value = TEST_USER)
     @Test
     public void deleteEventEventNotFound() throws Exception {
 
-        User user = createUser(TEST_USER);
+        createUser(TEST_USER);
 
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .delete(BASE_URL + "/" + 1L))
