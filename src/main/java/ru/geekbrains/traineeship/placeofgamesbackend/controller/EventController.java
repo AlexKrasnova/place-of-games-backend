@@ -42,7 +42,7 @@ public class EventController {
         eventProcessor.deleteParticipant(id, principal.getName());
     }
 
-    @DeleteMapping("owned-events/{id}")
+    @DeleteMapping("/{id}")
     public void deleteEvent(@PathVariable Long id, Principal principal) {
         eventProcessor.deleteEvent(id, principal.getName());
     }
