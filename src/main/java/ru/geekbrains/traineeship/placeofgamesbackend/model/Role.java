@@ -19,4 +19,5 @@ public class Role {
     @Id
     @Column(name = "name")
     private String name;
+
 }

@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 public class EventMapper {
 
     private final PlaceMapper placeMapper;
+
     private final UserMapper userMapper;
 
     public EventDTO mapToEventDTO(Event event, String currentUserLogin) {
@@ -65,5 +66,4 @@ public class EventMapper {
                 .category(eventDTO.getCategory())
                 .build();
     }
-
 }

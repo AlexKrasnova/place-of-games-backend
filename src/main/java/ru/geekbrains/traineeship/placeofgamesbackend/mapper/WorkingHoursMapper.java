@@ -15,5 +15,4 @@ public class WorkingHoursMapper {
                 .endTime(workingHours.getEndTime())
                 .build();
     }
-
 }

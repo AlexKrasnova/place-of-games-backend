@@ -23,7 +23,9 @@ import java.util.stream.Collectors;
 public class PlaceController {
 
     private final PlaceService placeService;
+
     private final PlaceMapper placeMapper;
+
     private final TimePeriodMapper timePeriodMapper;
 
     @GetMapping

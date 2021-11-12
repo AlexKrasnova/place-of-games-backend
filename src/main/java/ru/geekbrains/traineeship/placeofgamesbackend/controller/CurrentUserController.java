@@ -33,16 +33,12 @@ public class CurrentUserController {
 
     @GetMapping("/owned-events")
     public List<EventDTO> getOwnedEvents(Principal principal) {
-
         return eventProcessor.findByOwner(principal.getName());
-
     }
 
     @GetMapping("/events-to-participate")
     public List<EventDTO> getEventsToParticipate(Principal principal) {
-
         return eventProcessor.findByParticipant(principal.getName());
-
     }
 
 }

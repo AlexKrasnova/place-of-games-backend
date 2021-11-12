@@ -61,4 +61,5 @@ public class Event {
 
     @Version
     private Long version;
+
 }

@@ -32,7 +32,7 @@ public class JwtProvider {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
         } catch (Exception e) {
-            log.severe("invalid token");
+            log.severe("Invalid token");
         }
         return false;
     }
