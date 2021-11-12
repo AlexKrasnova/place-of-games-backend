@@ -63,11 +63,13 @@ public class EventService {
     }
 
     @Transactional
-    public void deleteEvent(Long eventId, User user){
+    public void deleteEvent(Long eventId, User user) {
         Event event = findById(eventId);
-        if(event.getOwner().equals(user)) {
+        if (event.getOwner().equals(user)) {
             eventRepository.deleteById(eventId);
-        } else { throw new CurrentUserNotEventOwnerException(); }
+        } else {
+            throw new CurrentUserNotEventOwnerException();
+        }
     }
 
     @Transactional
