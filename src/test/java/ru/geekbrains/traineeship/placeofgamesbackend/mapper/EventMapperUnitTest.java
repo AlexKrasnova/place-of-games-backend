@@ -101,7 +101,7 @@ public class EventMapperUnitTest {
         Assertions.assertThat(result.getPlace()).isEqualTo(placeMapper.mapToPlaceDTO(place));
         Assertions.assertThat(result.getMaxNumberOfParticipants()).isEqualTo(event.getMaxNumberOfParticipants());
         Assertions.assertThat(result.getCategory()).isEqualTo(event.getCategory());
-        Assertions.assertThat(result.getIsCurrentUserEnrolled()).isEqualTo(false);
+        Assertions.assertThat(result.getIsCurrentUserEnrolled()).isFalse();
     }
 
     /**
@@ -175,8 +175,8 @@ public class EventMapperUnitTest {
         Assertions.assertThat(result.getMaxNumberOfParticipants()).isEqualTo(event.getMaxNumberOfParticipants());
         Assertions.assertThat(result.getCategory()).isEqualTo(event.getCategory());
         Assertions.assertThat(result.getDescription()).isEqualTo(event.getDescription());
-        Assertions.assertThat(result.getIsCurrentUserEnrolled()).isEqualTo(false);
-        Assertions.assertThat(result.getIsCurrentUserOwner()).isEqualTo(false);
+        Assertions.assertThat(result.getIsCurrentUserEnrolled()).isFalse();
+        Assertions.assertThat(result.getIsCurrentUserOwner()).isFalse();
         Assertions.assertThat(result.getParticipants()).isEqualTo(event.getParticipants().stream().map(userMapper::mapToUserDTO).collect(Collectors.toSet()));
 
     }
