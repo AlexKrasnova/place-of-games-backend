@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventDetailsDTO;
-import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventToCreateDTO;
+import ru.geekbrains.traineeship.placeofgamesbackend.dto.event.EventToSaveDTO;
 import ru.geekbrains.traineeship.placeofgamesbackend.model.Event;
 
 import java.util.stream.Collectors;
@@ -51,11 +51,12 @@ public class EventMapper {
                         .stream()
                         .anyMatch(user -> user.getLogin().equals(currentUserLogin))
                 )
+                .isCurrentUserOwner(currentUserLogin.equals(event.getOwner().getLogin()))
                 .participants(event.getParticipants().stream().map(userMapper::mapToUserDTO).collect(Collectors.toSet()))
                 .build();
     }
 
-    public Event mapToEvent(EventToCreateDTO eventDTO) {
+    public Event mapToEvent(EventToSaveDTO eventDTO) {
         return Event.builder()
                 .name(eventDTO.getName())
                 .time(eventDTO.getTime())

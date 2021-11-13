@@ -36,6 +36,11 @@ public class EventDetailsDTO {
      */
     private Boolean isCurrentUserEnrolled;
 
+    /**
+     * Признак того, является ли текущий пользователь owner-ом мероприятия
+     */
+    private Boolean isCurrentUserOwner;
+
     private Set<UserDTO> participants;
 
 }
