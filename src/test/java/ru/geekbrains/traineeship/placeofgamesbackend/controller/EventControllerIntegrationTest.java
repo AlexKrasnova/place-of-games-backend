@@ -493,7 +493,7 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers
                         .status()
-                        .isBadRequest())
+                        .isForbidden())
                 .andReturn();
 
         ErrorDTO errorDTO = getResponse(result, ErrorDTO.class);
