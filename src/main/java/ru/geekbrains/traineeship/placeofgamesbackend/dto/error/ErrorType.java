@@ -17,7 +17,8 @@ public enum ErrorType {
     CURRENT_USER_NOT_ENROLLED("Текущий пользователь не зарегистрирован на мероприятии", HttpStatus.BAD_REQUEST),
     USER_ALREADY_ENROLLED("Текущий пользоавтель уже зарегистрирован на мероприятии", HttpStatus.BAD_REQUEST),
     USER_UNAUTHORIZED("Доступ закрыт,", HttpStatus.UNAUTHORIZED),
-    NOT_WORKING_OR_NOT_FREE_TIME_PERIOD("Площадка не работает или время занято", HttpStatus.BAD_REQUEST);
+    NOT_WORKING_OR_NOT_FREE_TIME_PERIOD("Площадка не работает или время занято", HttpStatus.BAD_REQUEST),
+    USER_NOT_EVENT_OWNER("Текущий пользователь не является организатором мероприятия", HttpStatus.FORBIDDEN);
 
     private String description;
 
