@@ -65,11 +65,8 @@ public class EventService {
     @Transactional
     public void deleteEvent(Long eventId, User user) {
         Event event = findById(eventId);
-        if (event.getOwner().equals(user)) {
-            eventRepository.deleteById(eventId);
-        } else {
-            throw new CurrentUserNotEventOwnerException();
-        }
+        checkOwner(event, user);
+        eventRepository.deleteById(eventId);
     }
 
     @Transactional
@@ -97,5 +94,28 @@ public class EventService {
 
     public List<Event> findByParticipant(User user) {
         return eventRepository.findByParticipantId(user.getId());
+    }
+
+    public void updateById(Long id, Event event, User user) {
+        Event oldEvent = findById(id);
+        checkOwner(oldEvent, user);
+        oldEvent.setName(event.getName());
+        oldEvent.setTime(event.getTime());
+        oldEvent.setDuration(event.getDuration());
+        oldEvent.setDescription(event.getDescription());
+        oldEvent.setCategory(event.getCategory());
+        oldEvent.setMaxNumberOfParticipants(event.getMaxNumberOfParticipants());
+
+        Place place = placeService.findById(event.getPlaceId());
+        oldEvent.setPlaceId(event.getPlaceId());
+        oldEvent.setPlace(place);
+
+        eventRepository.save(oldEvent);
+    }
+
+    private void checkOwner(Event event, User user) {
+        if (!event.getOwner().equals(user)) {
+            throw new CurrentUserNotEventOwnerException();
+        }
     }
 }

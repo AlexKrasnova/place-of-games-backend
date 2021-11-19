@@ -44,7 +44,7 @@ public class EventProcessor {
         eventService.deleteParticipant(eventId, userService.findByLogin(currentUserLogin));
     }
 
-    public void deleteEvent (Long eventId, String currentUserLogin) {
+    public void deleteEvent(Long eventId, String currentUserLogin) {
         eventService.deleteEvent(eventId, userService.findByLogin(currentUserLogin));
     }
 
@@ -53,7 +53,6 @@ public class EventProcessor {
     }
 
     public List<EventDTO> findByOwner(String currentUserLogin) {
-
         return eventService
                 .findByOwner(userService.findByLogin(currentUserLogin))
                 .stream()
@@ -63,12 +62,15 @@ public class EventProcessor {
     }
 
     public List<EventDTO> findByParticipant(String currentUserLogin) {
-
         return eventService
                 .findByParticipant(userService.findByLogin(currentUserLogin))
                 .stream()
                 .map(event -> eventMapper.mapToEventDTO(event, currentUserLogin))
                 .collect(Collectors.toList());
 
+    }
+
+    public void updateById(Long id, EventToSaveDTO event, String currentUserLogin) {
+        eventService.updateById(id, eventMapper.mapToEvent(event), userService.findByLogin(currentUserLogin));
     }
 }
