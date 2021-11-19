@@ -534,6 +534,151 @@ public class EventControllerIntegrationTest extends AbstractIntegrationTest {
 
     }
 
+    @WithMockUser(value = TEST_USER)
+    @Test
+    public void updateEventByIdSuccess() throws Exception {
+
+        Event event = createEvent();
+
+        User user = createUser(TEST_USER);
+        event.setOwnerId(user.getId());
+        eventRepository.save(event);
+
+        Place place = createPlaceWithWorkingHours();
+
+        EventToSaveDTO eventDTO = EventToSaveDTO.builder()
+                .name("Теннис")
+                .time(event.getTime().minusMinutes(120))
+                .duration(90)
+                .placeId(place.getId())
+                .category(TENNIS)
+                .description("Просто игра")
+                .maxNumberOfParticipants(4)
+                .build();
+
+        mvc.perform(MockMvcRequestBuilders
+                        .put(BASE_URL + "/" + event.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventDTO)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers
+                        .status()
+                        .isOk());
+
+        event = eventRepository.findById(event.getId()).orElseThrow();
+
+        Assertions.assertThat(event.getName()).isEqualTo(eventDTO.getName());
+        Assertions.assertThat(event.getTime()).isEqualTo(eventDTO.getTime());
+        Assertions.assertThat(event.getDuration()).isEqualTo(eventDTO.getDuration());
+        Assertions.assertThat(event.getDescription()).isEqualTo(eventDTO.getDescription());
+        Assertions.assertThat(event.getPlaceId()).isEqualTo(eventDTO.getPlaceId());
+        Assertions.assertThat(event.getCategory()).isEqualTo(eventDTO.getCategory());
+        Assertions.assertThat(event.getMaxNumberOfParticipants()).isEqualTo(eventDTO.getMaxNumberOfParticipants());
+        Assertions.assertThat(event.getOwnerId()).isEqualTo(user.getId());
+    }
+
+    @WithMockUser(value = TEST_USER)
+    @Test
+    public void updateEventByIdEventNotFound() throws Exception {
+
+        createUser(TEST_USER);
+
+        EventToSaveDTO eventDTO = EventToSaveDTO.builder()
+                .name("Теннис")
+                .time(LocalDateTime.of(2021, 11, 12, 12, 0))
+                .duration(90)
+                .placeId(1L)
+                .category(TENNIS)
+                .description("Просто игра")
+                .maxNumberOfParticipants(4)
+                .build();
+
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .put(BASE_URL + "/" + 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventDTO)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers
+                        .status()
+                        .isNotFound())
+                .andReturn();
+
+        ErrorDTO errorDTO = getResponse(result, ErrorDTO.class);
+
+        Assertions.assertThat(errorDTO.getErrorType()).isEqualTo(EVENT_NOT_FOUND);
+        Assertions.assertThat(errorDTO.getMessage()).isEqualTo(EVENT_NOT_FOUND.getDescription());
+    }
+
+    @WithMockUser(value = TEST_USER)
+    @Test
+    public void updateEventByIdPlaceNotFound() throws Exception {
+
+        Event event = createEvent();
+
+        User user = createUser(TEST_USER);
+        event.setOwnerId(user.getId());
+        eventRepository.save(event);
+
+        EventToSaveDTO eventDTO = EventToSaveDTO.builder()
+                .name("Теннис")
+                .time(event.getTime().minusMinutes(120))
+                .duration(90)
+                .placeId(event.getPlaceId() + 1)
+                .category(TENNIS)
+                .description("Просто игра")
+                .maxNumberOfParticipants(4)
+                .build();
+
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .put(BASE_URL + "/" + event.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventDTO)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers
+                        .status()
+                        .isNotFound())
+                .andReturn();
+
+        ErrorDTO errorDTO = getResponse(result, ErrorDTO.class);
+
+        Assertions.assertThat(errorDTO.getErrorType()).isEqualTo(PLACE_NOT_FOUND);
+        Assertions.assertThat(errorDTO.getMessage()).isEqualTo(PLACE_NOT_FOUND.getDescription());
+    }
+
+    @WithMockUser(value = TEST_USER)
+    @Test
+    public void updateEventByIdUserNotEventOwner() throws Exception {
+
+        Event event = createEvent();
+
+        createUser(TEST_USER);
+
+        EventToSaveDTO eventDTO = EventToSaveDTO.builder()
+                .name("Теннис")
+                .time(event.getTime().minusMinutes(120))
+                .duration(90)
+                .placeId(event.getPlaceId())
+                .category(TENNIS)
+                .description("Просто игра")
+                .maxNumberOfParticipants(4)
+                .build();
+
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .put(BASE_URL + "/" + event.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventDTO)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers
+                        .status()
+                        .isForbidden())
+                .andReturn();
+
+        ErrorDTO errorDTO = getResponse(result, ErrorDTO.class);
+
+        Assertions.assertThat(errorDTO.getErrorType()).isEqualTo(USER_NOT_EVENT_OWNER);
+        Assertions.assertThat(errorDTO.getMessage()).isEqualTo(USER_NOT_EVENT_OWNER.getDescription());
+    }
+
     private User createUser(String login) {
 
         User user = User.builder()
