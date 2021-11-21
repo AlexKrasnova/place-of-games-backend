@@ -96,6 +96,7 @@ public class EventService {
         return eventRepository.findByParticipantId(user.getId());
     }
 
+    @Transactional
     public void updateById(Long id, Event event, User user) {
         Event oldEvent = findById(id);
         checkOwner(oldEvent, user);
