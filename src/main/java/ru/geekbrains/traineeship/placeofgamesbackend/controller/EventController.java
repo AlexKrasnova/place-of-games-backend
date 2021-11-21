@@ -47,6 +47,11 @@ public class EventController {
         eventProcessor.deleteEvent(id, principal.getName());
     }
 
+    @PutMapping("/{id}")
+    public void updateEventById(@PathVariable Long id, @RequestBody EventToSaveDTO event, Principal principal) {
+        eventProcessor.updateById(id, event, principal.getName());
+    }
+
     @SneakyThrows
     @PostMapping
     public ResponseEntity<Long> create(@RequestBody EventToSaveDTO event, Principal principal) {
